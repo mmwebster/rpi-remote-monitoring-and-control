@@ -157,7 +157,8 @@ def dryState(data):
 ##########################################################################################
 def main():
     # define FSM properties
-    states = {"STARTUP": startupState, "IDLE": idleState, "WET": wetState, "COLD": coldState, "HOT": hotState, "DRY": dryState}
+    states = {"STARTUP": startupState, "IDLE": idleState, "WET": wetState,
+              "COLD": coldState, "HOT": hotState, "DRY": dryState}
     start_state = "STARTUP"
 
     count = 0

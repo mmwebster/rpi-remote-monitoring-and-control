@@ -35,6 +35,8 @@ email = Email("wilomebster@gmail.com", "dracula08", "milowebster@gmail.com")
 ##########################################################################################
 # FSM state functions
 # @desc Definitions for each state of the FSM. They must return a state name
+#       corresponding to the next state. Python doesn't have switch statements,
+#       so using a lookup table to call the handler associated with each state.
 ##########################################################################################
 def startupState(data):
     print("Entered STARTUP state")
@@ -164,11 +166,14 @@ def main():
     # set initial state
     next_state = states[start_state]
     # call the state function associated with the current state
+    # TODO: remove this counter so that more than 10 transitions can occur
     while count < 10:
         # get the current inputs
+        # TODO: make this actually fetch the current values
         t = 0
         h = 0
-        # call the state function associated with the current state
+        # call the state function associated with the current state and store
+        # the returned next state str
         next_state_str = next_state({"h": h, "t": t))
         # set the next state function
         next_state = states[next_state_str]
@@ -178,4 +183,3 @@ main()
 
 ####
 # NOTE: left off at filling out the "->" actions in the state machine, where first needed to finish consildating and packaging the routines for which tests were originally written.
-

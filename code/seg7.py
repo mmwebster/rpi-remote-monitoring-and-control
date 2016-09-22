@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-# Note: going to import pigpio in main, then pass it to the
-#       constructors of a seg7 and si7021 class
-
 ##########################################################################################
 # Import libraries
 ##########################################################################################

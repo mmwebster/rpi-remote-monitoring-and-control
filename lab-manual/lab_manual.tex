@@ -666,24 +666,30 @@ A state machine is a programming model that discretely defines the behavior of a
         \end{enumerate}
     \end{enumerate}
     \subsubsection{The state diagram}
-    The next step in the design is to synthesize these high-level behaviors into a finite collection of states, transitions, inputs, and outputs that discretely define this behavior. The primary danger in this step is not ensuring that a single transition always evaluates and that there are not more or fewer than one evaluated transition. If, for a state in which only $n$ boolean inputs are of concern, less than $2^n$ transitions are defined, then there will exist undefined transitions that will cause undefined behavior of the FSM. On the other hand, if each defined transition is not a unique combination of inputs, then it is possible for multiple transition definitions to evaluate which will also cause undefined behavior. Keeping these two dangers in mind, the following is a state diagram for the FSM we will use, with a fully spanned set of unique transitions for each state.
-    \imagefigb{fsm-slab.png}{State diagram for Finite State Machine}
-    \noindent
-    \note{This system is in an imaginative environment in which turning the servo clockwise (up) decreases humidity and increases temperature, and turning the servo counter-clockwise (down) increases humidity and decreases temperature. Also to note, inputs from the IDLE state corresponding to multiple of WET/COLD/HOT/DRY are not explicitly spanned by the transition conditions, but allowed to default to the first evaluated. (e.g. if (h > h\_wet\_thresh) AND (t < t\_cold\_thresh), the FSM will enter the WET state and not the COLD state)}
+      The next step in the design is to synthesize these high-level behaviors into a finite set of states, transitions, inputs, and outputs that discretely define this behavior. The primary dangers in this step include \textbf{1) defining transitions based on combinations of inputs that aren't mutually exclusive} and \textbf{2) not spanning all possible combinations of inputs with the transitions defined}. If, for a state in which only $n$ boolean inputs are of concern, a transition doesn't evaulate for each $2^n$ possible combination of inputs, the FSM will exhibit undefined behavior. On the other hand, if each defined transition is not a unique combination of inputs, then it is possible for multiple defined transitions to evaluate which will also cause undefined behavior. Keeping these two dangers in mind, the following is a state diagram for the FSM we will use, with a fully spanned set of unique transitions for each state.
+      \imagefigb{fsm-slab.png}{State diagram for Finite State Machine}
+      \noindent
+      \note{This system is in a fictional environment in which turning the servo clockwise (up) decreases humidity and increases temperature, and turning the servo counter-clockwise (down) increases humidity and decreases temperature. Also to note, inputs from the IDLE state corresponding to multiple of WET/COLD/HOT/DRY are not explicitly spanned by the transition conditions, but allowed to default to the first evaluated. (e.g. if (h > h\_wet\_thresh) AND (t < t\_cold\_thresh), the FSM will enter the WET state and not the COLD state)}
   \subsection{Implementing the state machine}
-  To implement this state machine, first, navigate back to your workspace from the command line of the RPi with:
-  \codeb{Navigate to your workpsace}
-  {
-    cd \textasciitilde/Desktop/python-code/
-  }
-  Then create a new file \textit{main}, that will be used to contain all of the state machine code, with:
-  \codeb{Create main Python FSM file}
-  {
-    nano main.py
-  }
-  Now, copy and paste the following code into this file:
+    To implement this state machine, first, navigate back to your workspace from the command line of the RPi with:
+    \codeb{Navigate to your workpsace}
+    {
+      cd \textasciitilde/Desktop/python-code/
+    }
+    Then create a new file \textit{main}, that will be used to contain all of the state machine code, with:
+    \codeb{Create main Python FSM file}
+    {
+      nano main.py
+    }
+    Now, copy and paste the following code into this file:
 
-  % \pycode{}{}
+    \lstinputlisting[language=Python, caption=Main code that implements the FSM]{si7021-test-tex.py}
+    \underline{\textit{Note}}: When copying the above code, make sure that you do not copy the page number in between the two pages.
+
+  \subsection{Daemonizing the FSM (main.py)}
+    \subsubsection{Installing Supervisor}
+    \subsubsection{Configuring Supervisor}
+    \subsubsection{Daemonizing main.py with Supervisor}
 
 
 \section{Data Analysis}
