@@ -15,9 +15,9 @@ from si7021 import Si7021
 ##########################################################################################
 # Perform initializations and instantiations
 ##########################################################################################
-h_wet_thresh = 85 # (% humidity) upper threshold for humidity
+h_wet_thresh = 90 # (% humidity) upper threshold for humidity
 h_dry_thresh = 40 # (% humidity) lower threshold for humidity
-t_hot_thresh = 25 # (deg Celcius) upper threshold for temperature
+t_hot_thresh = 23 # (deg Celcius) upper threshold for temperature
 t_cold_thresh = 18 # (deg Celcius) lower threshold for temperature
 
 # An email will be sent every multiple of `email_period` that the
@@ -117,8 +117,8 @@ def idleState(data):
     else:
         # no danger state transitions evaluated..remaining in IDLE
         # -> display humidity for 1s, then temp for 1s
-        seg7.display("HU__", False, 1)
-        seg7.display("tP__", False, 1)
+        # seg7.display("HU__", False, 1)
+        # seg7.display("tP__", False, 1)
         return { "next_state": "IDLE", "ds_count": data["ds_count"] }
 
 def wetState(data):
@@ -131,8 +131,8 @@ def wetState(data):
     if data["h"] > h_wet_thresh:
         # perform outputs
         # -> display humidity for 1s, then temp for 1s
-        seg7.display("HU__", False, 1)
-        seg7.display("tP__", False, 1)
+        # seg7.display("HU__", False, 1)
+        # seg7.display("tP__", False, 1)
         # -> turn servo up then back over 3s
         servo.rotateTo(servo.deg_max)
         time.sleep(1)
@@ -157,8 +157,8 @@ def coldState(data):
     if data["t"] < t_cold_thresh:
         # perform outputs
         # -> display humidity for 1s, then temp for 1s
-        seg7.display("HU__", False, 1)
-        seg7.display("tP__", False, 1)
+        # seg7.display("HU__", False, 1)
+        # seg7.display("tP__", False, 1)
         # -> turn servo down then back over 3s
         servo.rotateTo(servo.deg_min)
         time.sleep(1)
@@ -183,8 +183,8 @@ def hotState(data):
     if data["t"] > t_hot_thresh:
         # perform outputs
         # -> display humidity for 1s, then temp for 1s
-        seg7.display("HU__", False, 1)
-        seg7.display("tP__", False, 1)
+        # seg7.display("HU__", False, 1)
+        # seg7.display("tP__", False, 1)
         # -> turn servo down then back over 3s
         servo.rotateTo(servo.deg_min)
         time.sleep(1)
@@ -209,8 +209,8 @@ def dryState(data):
     if data["h"] < h_dry_thresh:
         # perform outputs
         # -> display humidity for 1s, then temp for 1s
-        seg7.display("HU__", False, 1)
-        seg7.display("tP__", False, 1)
+        # seg7.display("HU__", False, 1)
+        # seg7.display("tP__", False, 1)
         # -> turn servo down then back over 3s
         servo.rotateTo(servo.deg_min)
         time.sleep(1)
