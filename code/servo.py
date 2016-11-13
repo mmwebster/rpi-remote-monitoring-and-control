@@ -26,7 +26,7 @@ class Servo:
         self.deg_max = 210
 
         # start at the provided rotation
-        _initRotateTo(initDegrees)
+        self._initRotateTo(initDegrees)
 
     def _degreesToDutyCycle(self, degrees):
         # assert proper use
@@ -37,27 +37,27 @@ class Servo:
         # convert fraction to the duty cycle from that corresponding to 0deg
         # looks odd since max_dc corresponds to min degree position,
         # and vice-versa
-        dc_from_max = ((self.dc_max - self.dc_min) * init_rotation)
+        dc_from_max = ((self.dc_max - self.dc_min) * rotation)
         # return the dc for the deg position
         return self.dc_max - dc_from_max
 
     def _initRotateTo(self, degrees):
-        duty_cycle = _degreesToDutyCycle(degrees)
-        servo.start(duty_cycle) # start at init degree position
-        print("Rotated to " + str(degrees) + degree_sign)
+        duty_cycle = self._degreesToDutyCycle(degrees)
+        self.servo.start(duty_cycle) # start at init degree position
+        print("Rotated to " + str(degrees) + self.degree_sign)
 
     def rotateTo(self, degrees):
         # convert to the duty cycle
-        duty_cycle = _degreesToDutyCycle(degrees)
+        duty_cycle = self._degreesToDutyCycle(degrees)
         # adjust duty cycle
-        servo.ChangeDutyCycle(duty_cycle)
-        print("Rotated to " + str(degrees) + degree_sign)
+        self.servo.ChangeDutyCycle(duty_cycle)
+        print("Rotated to " + str(degrees) + self.degree_sign)
 
     def test(self):
         positions = [105, 210, 105, 0]
 
         for position in positions:
-            rotateTo(position)
+            self.rotateTo(position)
             time.sleep(1) # wait until rotation is finished
 
     def __exit__(self):

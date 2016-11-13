@@ -40,7 +40,7 @@ class Mailer:
 
     # @desc Sends a test email
     def test(self):
-        send("RPi Test", "Mailer class is functioning properly")
+        self.send("RPi Test", "Mailer class is functioning properly")
 
     def __exit__(self):
         self.server.quit()

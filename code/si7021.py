@@ -53,11 +53,11 @@ class Si7021:
         # iterate `numTicks` times
         while ticks < numTicks:
             # read humidity
-            rh_value = readRelativeHumidity()
+            rh_value = self.readRelativeHumidity()
             # read temperature
-            t_value = readTemperature()
+            t_value = self.readTemperature()
             # print stats
-            print ("Humidity: {:.2f}%, Temperature: {:.2f}" + degree_sign + "C").format(rh_value, t_value)
+            print ("Humidity: {:.2f}%, Temperature: {:.2f}" + self.degree_sign + "C").format(rh_value, t_value)
             # wait until next iteration
             time.sleep(1)
 

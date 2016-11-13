@@ -60,7 +60,7 @@ class Seg7:
             self.pi.i2c_write_device(self.seg7, [char])
 
     def test(self):
-        display("HELO", True, 5)
+        self.display("HELO", True, 5)
 
     def __exit__(self):
         self.pi.i2c_close(self.seg7)
