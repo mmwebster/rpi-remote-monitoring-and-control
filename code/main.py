@@ -64,7 +64,7 @@ def startupState(data):
     if True:
         # perform outputs
         # -> sent startup email
-        email.send("RPi Update", "System: STARTUP")
+        mailer.send("RPi Update", "System: STARTUP")
         # -> display IDLE
         seg7.display("ldLE", False, 1)
         return "IDLE"
@@ -133,7 +133,7 @@ def wetState(data):
     # catch extended periods of time in WET state
     if ds_count % email_period == 0:
         # perform outputs
-        email.send("RPi Warning", "System: WET for " + ds_count + "s")
+        mailer.send("RPi Warning", "System: WET for " + ds_count + "s")
     # define transitions
     if data["h"] > h_wet_thresh:
         # perform outputs
@@ -151,7 +151,7 @@ def coldState(data):
     # catch extended periods of time in COLD state
     if ds_count % email_period == 0:
         # perform outputs
-        email.send("RPi Warning", "System: COLD for " + ds_count + "s")
+        mailer.send("RPi Warning", "System: COLD for " + ds_count + "s")
     if data["t"] < t_cold_thresh:
         # perform outputs
         # -> display humidity for 1s, then temp for 1s
@@ -169,7 +169,7 @@ def hotState(data):
     # catch extended periods of time in HOT state
     if ds_count % email_period == 0:
         # perform outputs
-        email.send("RPi Warning", "System: HOT for " + ds_count + "s")
+        mailer.send("RPi Warning", "System: HOT for " + ds_count + "s")
     if data["t"] > t_hot_thresh:
         # perform outputs
         # -> display humidity for 1s, then temp for 1s
@@ -186,7 +186,7 @@ def dryState(data):
     # catch extended periods of time in DRY state
     if ds_count % email_period == 0:
         # perform outputs
-        email.send("RPi Warning", "System: DRY for " + ds_count + "s")
+        mailer.send("RPi Warning", "System: DRY for " + ds_count + "s")
     if data["h"] < h_dry_thresh:
         # perform outputs
         # -> display humidity for 1s, then temp for 1s
@@ -233,7 +233,7 @@ def main():
         h = si7021.readRelativeHumidity()
         # call the state function associated with the current state and store
         # the returned next state str
-        next_state_str = next_state({"h": h, "t": t))
+        next_state_str = next_state({"h": h, "t": t})
         # set the next state function
         next_state = states[next_state_str]
         count += 1
