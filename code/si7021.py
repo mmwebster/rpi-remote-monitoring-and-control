@@ -49,7 +49,7 @@ class Si7021:
 
     def test(self):
         ticks = 0
-        numTicks = 5
+        numTicks = 3
         # iterate `numTicks` times
         while ticks < numTicks:
             # read humidity

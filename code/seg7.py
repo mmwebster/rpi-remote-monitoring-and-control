@@ -28,7 +28,7 @@ class Seg7:
             attempts += 1
 
     # @desc display a string of characters (max 4) on the seg7 w/ timing
-    #       resolution of 1s
+    #       resolution of .2s
     # @param text The string of chararcters to display
     # @param flash True if this text should flash
     # @param timeout How long (in seconds) to display the text
@@ -68,7 +68,7 @@ class Seg7:
             self.pi.i2c_write_device(self.seg7, [char])
 
     def test(self):
-        self.display("HELO", True, 3)
+        self.display("HELO", True, 1.2) # flash alt. 6 times (aka 1.2/.2 = 6)
 
     def __exit__(self):
         self.pi.i2c_close(self.seg7)
