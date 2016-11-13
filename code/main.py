@@ -34,7 +34,7 @@ pi = pigpio.pi()
 mailer = Mailer("wilomebster@gmail.com", secret.fetch("email_password"), "milowebster@gmail.com")
 
 # instantiate servo class
-servo = Servo(25, 210/2) # start servo via pin 25, at 50% rotation
+servo = Servo(4, 210/2) # start servo via GPIO 25, at 50% rotation
 
 # instantiate seg7 class
 seg7 = Seg7(pi, 1, 0x71) # start 7 segment display on I2C bus `1` and address 0x71

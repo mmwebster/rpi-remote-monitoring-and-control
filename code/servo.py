@@ -13,11 +13,11 @@ import RPi.GPIO as GPIO
 # @notes Not all of the RPi's GPIO support software controlled PWM—-pin
 #        25 is recommended.
 class Servo:
-    def __init__(self, pin, initDegrees):
+    def __init__(self, gpioPin, initDegrees):
         GPIO.setmode(GPIO.BCM) # pin numbering scheme that uses GPIO numbers
         GPIO.setwarnings(False)
-        GPIO.setup(pin, GPIO.OUT) # set GPIO 25 as output
-        self.servo = GPIO.PWM(pin, 50) # instantiate PWM output to GPIO `pin` @ 50Hz
+        GPIO.setup(gpioPin, GPIO.OUT) # set GPIO 25 as output
+        self.servo = GPIO.PWM(gpioPin, 50) # instantiate PWM output to GPIO `pin` @ 50Hz
 
         self.degree_sign= u'\N{DEGREE SIGN}' # unicode for the degree symbol
         self.dc_min = 2.1 # the min duty cycle corresponding to 210deg rotation
