@@ -23,6 +23,7 @@ class Servo:
         self.dc_min = 2.1 # the min duty cycle corresponding to 210deg rotation
         self.dc_max = 12.3 # the max duty cycle corresponding to 0deg rotation
         self.deg_min = 0
+        self.deg_mid = 105
         self.deg_max = 210
 
         # start at the provided rotation

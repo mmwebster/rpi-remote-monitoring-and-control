@@ -55,48 +55,81 @@ si7021 = Si7021(pi, 1, 0x40) # start hum. & temp. sensor on I2C bus `1` and addr
 #       postponed until prior timing periods have ended. If your system must
 #       respond quickly to its inputs, refrain from using timing or implement the
 #       non-blocking version using Python's `threading` module.
+# @note Hot/Cold & Dry/Humid thresholds DO NOT USE HYSTERESIS. They will spam when
+#       near the thresholds.
 ##########################################################################################
 def startupState(data):
-    print("Entered STARTUP state")
+    print("FSM: Entered STARTUP state")
     # define transitions
     if True:
         # perform outputs
+        # -> sent startup email
         email.send("RPi Update", "System: STARTUP")
-        # seg7.display()
+        # -> display IDLE
+        seg7.display("ldLE", False, 1)
         return "IDLE"
 def idleState(data):
-    print("Entered IDLE state")
+    print("FSM: Entered IDLE state")
     # define transitions
     if data["h"] > h_wet_thresh:
         # perform outputs
         # -> display UET for 3s
+        seg7.display("UET", False, 1)
         # -> turn servo up then back over 3s
+        servo.rotateTo(servo.degree_max)
+        time.sleep(1)
+        servo.rotateTo(servo.degree_mid)
         # -> ds_count = 1
+        ds_count = 1
         return "WET"
     elif data["t"] < t_cold_thresh:
         # perform outpus
         # -> display COLD for 3s
+        seg7.display("COLD", False, 1)
         # -> turn servo up then back over 3s
+        servo.rotateTo(servo.degree_max)
+        time.sleep(1)
+        servo.rotateTo(servo.degree_mid)
         # -> ds_count = 1
+        ds_count = 1
         return "COLD"
     elif data["t"] > t_hot_thresh:
         # perform outputs
         # -> display HOT for 3s
+        seg7.display("HOT", False, 1)
         # -> turn servo down then back over 3s
+        servo.rotateTo(servo.degree_min)
+        time.sleep(1)
+        servo.rotateTo(servo.degree_mid)
         # -> ds_count = 1
+        ds_count = 1
         return "HOT"
     elif data["h"] < h_dry_thresh:
         # perform outputs
         # -> display DRY for 3s
+        seg7.dislpay("DRY", False, 1)
         # -> turn servo down then back over 3s
+        servo.rotateTo(servo.degree_min)
+        time.sleep(1)
+        servo.rotateTo(servo.degree_mid)
         # -> ds_count = 1
+        ds_count = 1
         return "DRY"
     else:
         # no danger state transitions evaluated..remaining in IDLE
         # -> display humidity for 1s, then temp for 1s
+        seg7.display("HU__", False, 1)
+        seg7.display("tP__", False, 1)
         return "IDLE"
+
+
+
+
+
+
+
 def wetState(data):
-    print("Entered WET state")
+    print("FSM: Entered WET state")
     # catch extended periods of time in WET state
     if ds_count % email_period == 0:
         # perform outputs
@@ -114,7 +147,7 @@ def wetState(data):
         # -> ds_count = 0
         return "IDLE"
 def coldState(data):
-    print("Entered COLD state")
+    print("FSM: Entered COLD state")
     # catch extended periods of time in COLD state
     if ds_count % email_period == 0:
         # perform outputs
@@ -132,7 +165,7 @@ def coldState(data):
         return "IDLE"
     return "HOT"
 def hotState(data):
-    print("Entered HOT state")
+    print("FSM: Entered HOT state")
     # catch extended periods of time in HOT state
     if ds_count % email_period == 0:
         # perform outputs
@@ -149,7 +182,7 @@ def hotState(data):
         # -> ds_count = 0
         return "IDLE"
 def dryState(data):
-    print("Entered DRY state")
+    print("FSM: Entered DRY state")
     # catch extended periods of time in DRY state
     if ds_count % email_period == 0:
         # perform outputs
@@ -180,30 +213,30 @@ def main():
     states = {"STARTUP": startupState, "IDLE": idleState, "WET": wetState, "COLD": coldState, "HOT": hotState, "DRY": dryState}
     start_state = "STARTUP"
 
-    print("Started up! Running tests.")
+    print("MAIN: Started up! Running tests.")
     mailer.test()
     seg7.test()
     servo.test()
     si7021.test()
-    print("All tests passed? Check their outputs to confirm.")
+    print("MAIN: All tests passed? Check their outputs to confirm.")
 
+    print("MAIN: Starting up the main FSM...")
 
-    # count = 0
-    # # set initial state
-    # next_state = states[start_state]
-    # # call the state function associated with the current state
-    # # TODO: remove this counter so that more than 10 transitions can occur
-    # while count < 10:
-    #     # get the current inputs
-    #     # TODO: make this actually fetch the current values
-    #     t = 0
-    #     h = 0
-    #     # call the state function associated with the current state and store
-    #     # the returned next state str
-    #     next_state_str = next_state({"h": h, "t": t))
-    #     # set the next state function
-    #     next_state = states[next_state_str]
-    #     count += 1
+    count = 0
+    # set initial state
+    next_state = states[start_state]
+    # call the state function associated with the current state
+    # TODO: remove this counter so that more than 10 transitions can occur
+    while count < 2:
+        # get the current inputs
+        t = si7021.readTemperature()
+        h = si7021.readRelativeHumidity()
+        # call the state function associated with the current state and store
+        # the returned next state str
+        next_state_str = next_state({"h": h, "t": t))
+        # set the next state function
+        next_state = states[next_state_str]
+        count += 1
 
 main()
 
