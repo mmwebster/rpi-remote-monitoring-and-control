@@ -6,8 +6,6 @@
 ##########################################################################################
 import time
 from pymail import Email
-import secrets
-
 
 ##########################################################################################
 # Perform initializations and instantiations
@@ -25,7 +23,7 @@ email_period = 10
 ds_count = 0
 
 # instantiate email class
-email = Email("wilomebster@gmail.com", fetch_secret("email_password"), "milowebster@gmail.com")
+email = Email("wilomebster@gmail.com", "XXXXXX", "milowebster@gmail.com")
 
 # instantiate servo class
 

@@ -6,7 +6,7 @@
 ##########################################################################################
 import time
 import pigpio
-import secrets
+from secrets import Secret
 from pymail import Mailer
 from seg7 import Seg7
 from servo import Servo
@@ -29,11 +29,14 @@ email_period = 30
 # This counter keeps track of the time elapsed since entering a "danger" state
 ds_count = 0
 
+# instantiate secrets pool
+secret = Secret()
+
 # instantiate pigpio
 pi = pigpio.pi()
 
 # instantiate email class
-mailer = Mailer("wilomebster@gmail.com", fetch_secret("email_password"), "milowebster@gmail.com")
+mailer = Mailer("wilomebster@gmail.com", secret.fetch("email_password"), "milowebster@gmail.com")
 
 # instantiate servo class
 servo = Servo(25, 210/2) # start servo via pin 25, at 50% rotation
