@@ -47,7 +47,7 @@ class Si7021:
         # Convert the payload to temperature in Celcuis (pg. 22 of si7021 datasheet)
         return ((175.72 * t_code) / (65536.0)) - 46.85
 
-    def test:
+    def test(self):
         ticks = 0
         numTicks = 5
         # iterate `numTicks` times
