@@ -29,6 +29,9 @@ class Seg7:
 
     # @desc display a string of characters (max 4) on the seg7 w/ timing
     #       resolution of .2s
+    # @notes Use of the timing/flashing feature of this function is blocking,
+    #        and must therefore be used with caution. Any parent code, such as
+    #        a state machine, will be suspended, pending the end of the timer
     # @param text The string of chararcters to display
     # @param flash True if this text should flash
     # @param timeout How long (in seconds) to display the text
