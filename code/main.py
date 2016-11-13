@@ -5,7 +5,12 @@
 # Import libraries
 ##########################################################################################
 import time
-from pymail import Email
+import pigpio
+import secrets
+from pymail import Mailer
+from seg7 import Seg7
+from servo import Servo
+from si7021 import Si7021
 # TODO: import pigpio and pass to seg7 and si7021 instances
 
 
@@ -24,14 +29,20 @@ email_period = 30
 # This counter keeps track of the time elapsed since entering a "danger" state
 ds_count = 0
 
+# instantiate pigpio
+pi = pigpio.pi()
+
 # instantiate email class
-email = Email("wilomebster@gmail.com", "dracula08", "milowebster@gmail.com")
+mailer = Mailer("wilomebster@gmail.com", fetch_secret("email_password"), "milowebster@gmail.com")
 
 # instantiate servo class
+servo = Servo(25, 210/2) # start servo via pin 25, at 50% rotation
 
 # instantiate seg7 class
+seg7 = Seg7(pi, 1, 0x71) # start 7 segment display on I2C bus `1` and address 0x71
 
 # instantiate si7021 class
+si7021 = Si7021(pi, 1, 0x40) # start hum. & temp. sensor on I2C bus `1` and address 0x40
 
 ##########################################################################################
 # FSM state functions
@@ -163,22 +174,30 @@ def main():
     states = {"STARTUP": startupState, "IDLE": idleState, "WET": wetState, "COLD": coldState, "HOT": hotState, "DRY": dryState}
     start_state = "STARTUP"
 
-    count = 0
-    # set initial state
-    next_state = states[start_state]
-    # call the state function associated with the current state
-    # TODO: remove this counter so that more than 10 transitions can occur
-    while count < 10:
-        # get the current inputs
-        # TODO: make this actually fetch the current values
-        t = 0
-        h = 0
-        # call the state function associated with the current state and store
-        # the returned next state str
-        next_state_str = next_state({"h": h, "t": t))
-        # set the next state function
-        next_state = states[next_state_str]
-        count += 1
+    print("Started up! Running tests.")
+    mailer.test()
+    seg7.test()
+    servo.test()
+    si7021.test()
+    print("All tests passed? Check their outputs")
+
+
+    # count = 0
+    # # set initial state
+    # next_state = states[start_state]
+    # # call the state function associated with the current state
+    # # TODO: remove this counter so that more than 10 transitions can occur
+    # while count < 10:
+    #     # get the current inputs
+    #     # TODO: make this actually fetch the current values
+    #     t = 0
+    #     h = 0
+    #     # call the state function associated with the current state and store
+    #     # the returned next state str
+    #     next_state_str = next_state({"h": h, "t": t))
+    #     # set the next state function
+    #     next_state = states[next_state_str]
+    #     count += 1
 
 main()
 

@@ -19,7 +19,7 @@ class Si7021:
         self.rh_i2c_addr = 0xf5
         self.t_i2c_addr = 0xf3
 
-    def readRelativeHumidity:
+    def readRelativeHumidity(self):
         # Request rel. humidity w/ command: `Measure Relative Humidity, No Hold Master Mode`
         self.pi.i2c_write_device(si7021, [self.rh_i2c_addr])
         time.sleep(0.1) # wait to ensure proper delay
@@ -33,7 +33,7 @@ class Si7021:
         # Convert the payload to relative (%) humidity (pg. 21 of si7021 datasheet)
         return ((125.0 * rh_code) / 65536.0) - 6.0
 
-    def readTemperature:
+    def readTemperature(self):
         # Request temperature w/ command: `Measure Temperature, No Hold Master Mode`
         self.pi.i2c_write_device(si7021, [self.t_i2c_addr])
         time.sleep(0.1) # wait to ensure proper delay
@@ -46,6 +46,21 @@ class Si7021:
 
         # Convert the payload to temperature in Celcuis (pg. 22 of si7021 datasheet)
         return ((175.72 * t_code) / (65536.0)) - 46.85
+
+    def test:
+        ticks = 0
+        numTicks = 5
+        # iterate `numTicks` times
+        while ticks < numTicks:
+            # read humidity
+            rh_value = readRelativeHumidity()
+            # read temperature
+            t_value = readTemperature()
+            # print stats
+            print ("Humidity: {:.2f}%, Temperature: {:.2f}" + degree_sign + "C").format(rh_value, t_value)
+            # wait until next iteration
+            time.sleep(1)
+
 
     def __exit__(self):
         self.pi.i2c_close(si7021)

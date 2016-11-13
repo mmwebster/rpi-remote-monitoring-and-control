@@ -10,7 +10,7 @@ from email.MIMEText import MIMEText
 #######################################################################
 # Class definitions
 #######################################################################
-class Email:
+class Mailer:
     def __init__(self, from_address, from_pass, to_address):
         # save props
         self.from_address = from_address
@@ -37,6 +37,10 @@ class Email:
         # format and send the email
         text = self.msg.as_string() # package the email into a single string
         self.server.sendmail(self.from_address, self.to_address, text)
+
+    # @desc Sends a test email
+    def test(self):
+        send("RPi Test", "Mailer class is functioning properly")
 
     def __exit__(self):
         self.server.quit()

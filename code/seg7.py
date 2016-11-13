@@ -19,7 +19,8 @@ class Seg7:
         self.write([0x79]) # cursor control byte
         self.write([0x00]) # data byte specifying pos. 0
 
-    # @desc display a string of characters (max 4) on the seg7
+    # @desc display a string of characters (max 4) on the seg7 w/ timing
+    #       resolution of 1s
     # @param text The string of chararcters to display
     # @param flash True if this text should flash
     # @param timeout How long (in seconds) to display the text
@@ -57,6 +58,9 @@ class Seg7:
     def write(self, text):
         for char in text:
             self.pi.i2c_write_device(self.seg7, [char])
+
+    def test(self):
+        display("HELO", True, 5)
 
     def __exit__(self):
         self.pi.i2c_close(self.seg7)
