@@ -7,7 +7,7 @@
 import time
 import pigpio
 from secrets import Secret
-from pymail import Mailer
+from mailer import Mailer
 from seg7 import Seg7
 from servo import Servo
 from si7021 import Si7021
