@@ -34,7 +34,7 @@ class Servo:
         assert isinstance(degrees, int)
         assert (self.deg_min <= degrees <= self.deg_max)
         # convert degrees to fraction out of 210
-        rotation = degrees / 210
+        rotation = degrees / 210.0
         # convert fraction to the duty cycle from that corresponding to 0deg
         # looks odd since max_dc corresponds to min degree position,
         # and vice-versa
