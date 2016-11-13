@@ -61,6 +61,7 @@ class Servo:
             self.rotateTo(position)
             time.sleep(1) # wait until rotation is finished
 
-    def __exit__(self):
+    def __exit__(self, exc_type, exc, traceback):
+        print("Servo: Exiting, cleaning up")
         self.servo.stop()
         GPIO.cleanup()

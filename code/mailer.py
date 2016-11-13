@@ -44,5 +44,6 @@ class Mailer:
     def test(self):
         self.send("RPi Test", "Mailer class is functioning properly")
 
-    def __exit__(self):
+    def __exit__(self, exc_type, exc, traceback):
+        print("Mailer: Exiting, cleaning up")
         self.server.quit()

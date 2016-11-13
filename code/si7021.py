@@ -15,7 +15,19 @@ class Si7021:
         # init vars and the I2C comm
         self.degree_sign = u'\N{DEGREE SIGN}' # unicode for the degree symbol
         self.pi = pi_ref
-        self.si7021 = pi_ref.i2c_open(i2c_bus_ID, i2c_address)
+
+        # Open I2C com with si7021
+        attempts = 0
+        while attempts < 10:
+            try:
+                self.si7021 = pi_ref.i2c_open(i2c_bus_ID, i2c_address)
+                break
+            except pigpio.error as e:
+                print("Si7021: ERROR: failed to open com over I2C")
+                attempts += 1
+                if attempts == 9:
+                    raise "Si7021: FATAL ERROR: failed to open com over I2C"
+
         self.rh_i2c_addr = 0xf5
         self.t_i2c_addr = 0xf3
 
@@ -64,6 +76,6 @@ class Si7021:
             ticks += 1
 
 
-    def __exit__(self):
+    def __exit__(self, exc_type, exc, traceback):
+        print("Si7021: Exiting, cleaning up")
         self.pi.i2c_close(self.si7021)
-        self.pi.stop()
