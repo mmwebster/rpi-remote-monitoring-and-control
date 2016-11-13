@@ -34,6 +34,7 @@
 \definecolor{codepurple}{rgb}{0.88,0,0.92}
 \definecolor{bgcolor}{RGB}{55,55,55}
 \definecolor{line-num-color}{RGB}{88,88,88}
+\definecolor{darkgreen}{RGB}{30,130,30}
 
 \lstdefinestyle{pystyle}{
     backgroundcolor=\color{bgcolor},
@@ -78,7 +79,7 @@
 \newcommand*{\myfont}{\fontfamily{pcr}\selectfont}
 \newcommand{\codei}[1]{\colorbox{SpringGreen}{\texttt{#1}}} % inline code
 \newcommand{\codeb}[2]{
-  \begin{tcolorbox}[width=\textwidth,colback={SpringGreen},title={#1},colbacktitle=DarkGreen,coltitle=SpringGreen]
+  \begin{tcolorbox}[width=\textwidth,colback={SpringGreen},title={#1},colbacktitle=darkgreen,coltitle=SpringGreen]
     \myfont
     #2
   \end{tcolorbox}
@@ -152,14 +153,14 @@
   %
   \subsection{Definitions and Terminology}
     \begin{enumerate}
-        \createterm{https://en.wikipedia.org/wiki/Raspberry\_Pi}{RPi (Raspberry Pi)}{An awesome prototyping board that features a plethora advances hardware and utilities made incredibly easy to interface with}
+      \createterm{https://en.wikipedia.org/wiki/Raspberry\_Pi}{RPi (Raspberry Pi)}{An awesome prototyping board that features a plethora advances hardware and utilities made incredibly easy to interface with}
       \createterm{https://www.raspberrypi.org/blog/introducing-noobs/}{NOOBS (New Out Of Box Software)}{A software package for the RPi that makes installing the OS on an unconfigured RPi "much, much easier."}
       \createterm{https://en.wikipedia.org/wiki/Secure\_Shell}{SSH (Secure SHell)}{A protocol commonly used for remotely authenticating into a computer}
       \createterm{https://en.wikipedia.org/wiki/Transistor\%E2\%80\%93transistor\_logic}{TTL (Transistor-Transistor Logic)}{A serial protocol used for communication between two systems using only a RX (receive) and TX (transmit) signal}
       \createterm{https://en.wikipedia.org/wiki/Serial\_Peripheral\_Interface\_Bus}{SPI (Serial Peripheral Interface)}{A communications protocol that uses a master-slave architecture. More details can be found.}
       \createterm{https://en.wikipedia.org/wiki/I\%C2\%B2C}{I2C (Inter-Integrated Circuit)}{A communications protocol that allows for multiple master and slave nodes in the network. More details can be found.}
       \createterm{https://en.wikipedia.org/wiki/Finite-state\_machine}{FSM (Finite State Machine)}{A programming design that uses inputs to determine transitions between states, and particular outputs during the process. They are very useful for defining the lifetime of a system and how it will react to all possible inputs. More details can be found.}
-      \createterm{https://en.wikipedia.org/wiki/Hypertext\_Transfer\_Protocol#Request\_methods}{HTTP (Hypertext Transfer Protocol) Request}{The protocol used across the web for the majority of all communications. This manual will detail the process of using a POST request type to send data from the RPi to a remote destination.}
+      \createterm{https://en.wikipedia.org/wiki/Hypertext\_Transfer\_Protocol\#Request\_methods}{HTTP (Hypertext Transfer Protocol) Request}{The protocol used across the web for the majority of all communications. This manual will detail the process of using a POST request type to send data from the RPi to a remote destination.}
       \createterm{https://en.wikipedia.org/wiki/Command-line\_interface}{Shell CLI (Command-line Interface)}{An instance of a program that allows a user to directly interface with services provided by the OS via a suite of commands.}
       \createterm{https://en.wikipedia.org/wiki/Local\_area\_network}{LAN (Local Area Network)}{A computer network that, among other things, allows computers in the same vicinity to communicate with one another. Wireless printers in your home use the LAN set up by your router to communicate with your personal computer.}
       \createterm{https://en.wikipedia.org/wiki/Wide\_area\_network}{WAN (Wide Area Network)}{A computer network that, among other things, allows computers to communicate with one another, regarldess of geographic proximity. The internet is a form of WAN.}
@@ -361,9 +362,7 @@
     }
 
     Now, in case the \textit{pi} user is not by default a member of the I2C group, run \codei{sudo adduser pi I2C}.
-
-    \newline\newline
-
+    \newline
     Finally, probe the I2C interface to make sure that everything has been configured properly by running \codei{i2cdetect -y 1}. This should output something of the following form:
 
     \outputb{I2C interface detection output (si7021 \textbf{NOT} wired)}
@@ -443,14 +442,12 @@
       mkdir -p \textasciitilde/Desktop/python-code/test-scripts \\
       cd \textasciitilde/Desktop/python-code/test-scripts
     }
-    \newline
     \noindent
     Now create and edit a file using the same \textit{nano} editor used before:
     \codeb{Create si7021 Python testing script file}
     {
       nano si7021-test.py
     }
-    \newline
     \noindent
     Now copy and paste the following code into this file:
     \lstinputlisting[language=Python, caption=Script for testing si7021]{si7021-test-tex.py}
