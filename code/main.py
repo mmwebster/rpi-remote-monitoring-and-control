@@ -24,9 +24,6 @@ t_cold_thresh = 18 # (deg Celcius) lower threshold for temperature
 # system stays in a danger state.
 email_period = 30
 
-# This counter keeps track of the time elapsed since entering a "danger" state
-ds_count = 0
-
 # instantiate secrets pool
 secret = Secret()
 
@@ -68,52 +65,53 @@ def startupState(data):
         # -> display IDLE
         seg7.display("ldLE", False, 1)
         return "IDLE"
+
 def idleState(data):
     print("FSM: Entered IDLE state")
     # define transitions
     if data["h"] > h_wet_thresh:
         # perform outputs
         # -> display UET for 3s
-        seg7.display("UET", False, 1)
+        seg7.display("UET ", False, 1)
         # -> turn servo up then back over 3s
-        servo.rotateTo(servo.degree_max)
+        servo.rotateTo(servo.deg_max)
         time.sleep(1)
-        servo.rotateTo(servo.degree_mid)
+        servo.rotateTo(servo.deg_mid)
         # -> ds_count = 1
-        ds_count = 1
+        data["ds_count"] = 1
         return "WET"
     elif data["t"] < t_cold_thresh:
         # perform outpus
         # -> display COLD for 3s
         seg7.display("COLD", False, 1)
         # -> turn servo up then back over 3s
-        servo.rotateTo(servo.degree_max)
+        servo.rotateTo(servo.deg_max)
         time.sleep(1)
-        servo.rotateTo(servo.degree_mid)
+        servo.rotateTo(servo.deg_mid)
         # -> ds_count = 1
-        ds_count = 1
+        data["ds_count"] = 1
         return "COLD"
     elif data["t"] > t_hot_thresh:
         # perform outputs
         # -> display HOT for 3s
-        seg7.display("HOT", False, 1)
+        seg7.display("HOT ", False, 1)
         # -> turn servo down then back over 3s
-        servo.rotateTo(servo.degree_min)
+        servo.rotateTo(servo.deg_min)
         time.sleep(1)
-        servo.rotateTo(servo.degree_mid)
+        servo.rotateTo(servo.deg_mid)
         # -> ds_count = 1
-        ds_count = 1
+        data["ds_count"] = 1
         return "HOT"
     elif data["h"] < h_dry_thresh:
         # perform outputs
         # -> display DRY for 3s
-        seg7.dislpay("DRY", False, 1)
+        seg7.display("DRY ", False, 1)
         # -> turn servo down then back over 3s
-        servo.rotateTo(servo.degree_min)
+        servo.rotateTo(servo.deg_min)
         time.sleep(1)
-        servo.rotateTo(servo.degree_mid)
+        servo.rotateTo(servo.deg_mid)
         # -> ds_count = 1
-        ds_count = 1
+        data["ds_count"] = 1
         return "DRY"
     else:
         # no danger state transitions evaluated..remaining in IDLE
@@ -122,81 +120,110 @@ def idleState(data):
         seg7.display("tP__", False, 1)
         return "IDLE"
 
-
-
-
-
-
-
 def wetState(data):
     print("FSM: Entered WET state")
     # catch extended periods of time in WET state
-    if ds_count % email_period == 0:
+    if data["ds_count"] % email_period == 0:
         # perform outputs
-        mailer.send("RPi Warning", "System: WET for " + ds_count + "s")
+        mailer.send("RPi Warning", "System: WET for " + str(data["ds_count"]) + "s")
     # define transitions
     if data["h"] > h_wet_thresh:
         # perform outputs
         # -> display humidity for 1s, then temp for 1s
+        seg7.display("HU__", False, 1)
+        seg7.display("tP__", False, 1)
         # -> turn servo up then back over 3s
+        servo.rotateTo(servo.deg_max)
+        time.sleep(1)
+        servo.rotateTo(servo.deg_mid)
         # -> ds_count += 1
+        data["ds_count"] += 1
         return "WET"
     elif data["h"] <= h_wet_thresh:
         # perform outputs
         # -> display IDLE for 3s
+        seg7.display("ldLE", False, 1)
         # -> ds_count = 0
+        data["ds_count"] = 0
         return "IDLE"
+
 def coldState(data):
     print("FSM: Entered COLD state")
     # catch extended periods of time in COLD state
-    if ds_count % email_period == 0:
+    if data["ds_count"] % email_period == 0:
         # perform outputs
-        mailer.send("RPi Warning", "System: COLD for " + ds_count + "s")
+        mailer.send("RPi Warning", "System: COLD for " + str(data["ds_count"]) + "s")
     if data["t"] < t_cold_thresh:
         # perform outputs
         # -> display humidity for 1s, then temp for 1s
+        seg7.display("HU__", False, 1)
+        seg7.display("tP__", False, 1)
         # -> turn servo down then back over 3s
+        servo.rotateTo(servo.deg_min)
+        time.sleep(1)
+        servo.rotateTo(servo.deg_mid)
         # -> ds_count += 1
+        data["ds_count"] += 1
         return "COLD"
     elif data["t"] >= t_cold_thresh:
         # perform outputs
         # -> display IDLE for 3s
+        seg7.display("ldLE", False, 1)
         # -> ds_count = 0
+        data["ds_count"] = 0
         return "IDLE"
     return "HOT"
+
 def hotState(data):
     print("FSM: Entered HOT state")
     # catch extended periods of time in HOT state
-    if ds_count % email_period == 0:
+    if data["ds_count"] % email_period == 0:
         # perform outputs
-        mailer.send("RPi Warning", "System: HOT for " + ds_count + "s")
+        mailer.send("RPi Warning", "System: HOT for " + str(data["ds_count"]) + "s")
     if data["t"] > t_hot_thresh:
         # perform outputs
         # -> display humidity for 1s, then temp for 1s
+        seg7.display("HU__", False, 1)
+        seg7.display("tP__", False, 1)
         # -> turn servo down then back over 3s
+        servo.rotateTo(servo.deg_min)
+        time.sleep(1)
+        servo.rotateTo(servo.deg_mid)
         # -> ds_count += 1
+        data["ds_count"] += 1
         return "HOT"
     elif data["t"] <= t_hot_thresh:
         # perform outputs
         # -> display IDLE for 3s
+        seg7.display("ldLE", False, 1)
         # -> ds_count = 0
+        data["ds_count"] = 0
         return "IDLE"
+
 def dryState(data):
     print("FSM: Entered DRY state")
     # catch extended periods of time in DRY state
-    if ds_count % email_period == 0:
+    if data["ds_count"] % email_period == 0:
         # perform outputs
-        mailer.send("RPi Warning", "System: DRY for " + ds_count + "s")
+        mailer.send("RPi Warning", "System: DRY for " + str(data["ds_count"]) + "s")
     if data["h"] < h_dry_thresh:
         # perform outputs
         # -> display humidity for 1s, then temp for 1s
+        seg7.display("HU__", False, 1)
+        seg7.display("tP__", False, 1)
         # -> turn servo down then back over 3s
+        servo.rotateTo(servo.deg_min)
+        time.sleep(1)
+        servo.rotateTo(servo.deg_mid)
         # -> ds_count += 1
+        data["ds_count"] += 1
         return "DRY"
     elif data["h"] >= h_dry_thresh:
         # perform outputs
         # -> display IDLE for 3s
+        seg7.display("ldLE", False, 1)
         # -> ds_count = 0
+        data["ds_count"] = 0
         return "IDLE"
 
 ##########################################################################################
