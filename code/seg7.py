@@ -40,14 +40,21 @@ class Seg7:
 
     # @desc display a string of characters (max 4) on the seg7 w/ timing
     #       resolution of .2s
-    # @notes Use of the timing/flashing feature of this function is blocking,
-    #        and must therefore be used with caution. Any parent code, such as
-    #        a state machine, will be suspended, pending the end of the timer
-    # @param text The string of chararcters to display
+    # @note Use of the timing/flashing feature of this function is blocking,
+    #       and must therefore be used with caution. Any parent code, such as
+    #       a state machine, will be suspended, pending the end of the timer
+    # @note Make sure that this is pased a four-characters string so as to not
+    #       offset the cursor
+    # @param text The string of characters to display. So as to not offset the
+    #        cursor (unless that is the intention) this string must be exactly
+    #        four characters in length.
     # @param flash True if this text should flash
     # @param timeout How long (in seconds) to display the text
     def display(self, text, flash, timeout):
         assert isinstance(text, str)
+        if len(text) != 4:
+            print("Seg7: WARNING: By passing a string with more or fewer than four \
+                    characters, you have offset the display's cursor.")
         timeout_count = 0
         enabled = True
         while timeout_count < timeout:
