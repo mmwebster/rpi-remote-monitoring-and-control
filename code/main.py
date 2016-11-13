@@ -240,13 +240,13 @@ def main():
     states = {"STARTUP": startupState, "IDLE": idleState, "WET": wetState, "COLD": coldState, "HOT": hotState, "DRY": dryState}
     start_state = "STARTUP"
 
-    # print("MAIN: Started up! Running tests.")
-    # mailer.test()
-    # seg7.test()
-    # servo.test()
-    # time.sleep(1) # give servo time to move
-    # si7021.test()
-    # print("MAIN: All tests passed? Check their outputs to confirm.")
+    print("MAIN: Started up! Running tests.")
+    mailer.test()
+    seg7.test()
+    servo.test()
+    time.sleep(1) # give servo time to move
+    si7021.test()
+    print("MAIN: All tests passed? Check their outputs to confirm.")
 
     print("MAIN: Starting up the main FSM...")
 
