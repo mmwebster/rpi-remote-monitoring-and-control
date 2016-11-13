@@ -65,7 +65,7 @@ def startupState(data):
         mailer.send("RPi Update", "System: STARTUP")
         # -> display IDLE
         seg7.display("ldLE", False, 1)
-        return { next_state: "IDLE", ds_count: data["ds_count"] }
+        return { "next_state": "IDLE", "ds_count": data["ds_count"] }
 
 def idleState(data):
     print("FSM: Entered IDLE state")
@@ -80,7 +80,7 @@ def idleState(data):
         servo.rotateTo(servo.deg_mid)
         # -> ds_count = 1
         data["ds_count"] = 1
-        return { next_state: "WET", ds_count: data["ds_count"] }
+        return { "next_state": "WET", "ds_count": data["ds_count"] }
     elif data["t"] < t_cold_thresh:
         # perform outpus
         # -> display COLD for 3s
@@ -91,7 +91,7 @@ def idleState(data):
         servo.rotateTo(servo.deg_mid)
         # -> ds_count = 1
         data["ds_count"] = 1
-        return { next_state: "COLD", ds_count: data["ds_count"] }
+        return { "next_state": "COLD", "ds_count": data["ds_count"] }
     elif data["t"] > t_hot_thresh:
         # perform outputs
         # -> display HOT for 3s
@@ -102,7 +102,7 @@ def idleState(data):
         servo.rotateTo(servo.deg_mid)
         # -> ds_count = 1
         data["ds_count"] = 1
-        return { next_state: "HOT", ds_count: data["ds_count"] }
+        return { "next_state": "HOT", "ds_count": data["ds_count"] }
     elif data["h"] < h_dry_thresh:
         # perform outputs
         # -> display DRY for 3s
@@ -113,13 +113,13 @@ def idleState(data):
         servo.rotateTo(servo.deg_mid)
         # -> ds_count = 1
         data["ds_count"] = 1
-        return { next_state: "DRY", ds_count: data["ds_count"] }
+        return { "next_state": "DRY", "ds_count": data["ds_count"] }
     else:
         # no danger state transitions evaluated..remaining in IDLE
         # -> display humidity for 1s, then temp for 1s
         seg7.display("HU__", False, 1)
         seg7.display("tP__", False, 1)
-        return { next_state: "IDLE", ds_count: data["ds_count"] }
+        return { "next_state": "IDLE", "ds_count": data["ds_count"] }
 
 def wetState(data):
     print("FSM: Entered WET state")
@@ -139,14 +139,14 @@ def wetState(data):
         servo.rotateTo(servo.deg_mid)
         # -> ds_count += 1
         data["ds_count"] += 1
-        return { next_state: "WET", ds_count: data["ds_count"] }
+        return { "next_state": "WET", "ds_count": data["ds_count"] }
     else:
         # perform outputs
         # -> display IDLE for 3s
         seg7.display("ldLE", False, 1)
         # -> ds_count = 0
         data["ds_count"] = 0
-        return { next_state: "IDLE", ds_count: data["ds_count"] }
+        return { "next_state": "IDLE", "ds_count": data["ds_count"] }
 
 def coldState(data):
     print("FSM: Entered COLD state")
@@ -165,14 +165,14 @@ def coldState(data):
         servo.rotateTo(servo.deg_mid)
         # -> ds_count += 1
         data["ds_count"] += 1
-        return { next_state: "COLD", ds_count: data["ds_count"] }
+        return { "next_state": "COLD", "ds_count": data["ds_count"] }
     else:
         # perform outputs
         # -> display IDLE for 3s
         seg7.display("ldLE", False, 1)
         # -> ds_count = 0
         data["ds_count"] = 0
-        return { next_state: "IDLE", ds_count: data["ds_count"] }
+        return { "next_state": "IDLE", "ds_count": data["ds_count"] }
 
 def hotState(data):
     print("FSM: Entered HOT state")
@@ -191,14 +191,14 @@ def hotState(data):
         servo.rotateTo(servo.deg_mid)
         # -> ds_count += 1
         data["ds_count"] += 1
-        return { next_state: "HOT", ds_count: data["ds_count"] }
+        return { "next_state": "HOT", "ds_count": data["ds_count"] }
     else:
         # perform outputs
         # -> display IDLE for 3s
         seg7.display("ldLE", False, 1)
         # -> ds_count = 0
         data["ds_count"] = 0
-        return { next_state: "IDLE", ds_count: data["ds_count"] }
+        return { "next_state": "IDLE", "ds_count": data["ds_count"] }
 
 def dryState(data):
     print("FSM: Entered DRY state")
@@ -217,14 +217,14 @@ def dryState(data):
         servo.rotateTo(servo.deg_mid)
         # -> ds_count += 1
         data["ds_count"] += 1
-        return { next_state: "DRY", ds_count: data["ds_count"] }
+        return { "next_state": "DRY", "ds_count": data["ds_count"] }
     else:
         # perform outputs
         # -> display IDLE for 3s
         seg7.display("ldLE", False, 1)
         # -> ds_count = 0
         data["ds_count"] = 0
-        return { next_state: "IDLE", ds_count: data["ds_count"] }
+        return { "next_state": "IDLE", "ds_count": data["ds_count"] }
 
 ##########################################################################################
 # Utility functions
