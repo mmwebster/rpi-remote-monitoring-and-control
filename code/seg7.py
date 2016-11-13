@@ -24,7 +24,7 @@ class Seg7:
                 self.write([0x00]) # data byte specifying pos. 0
                 break
             except pigpio.error as e:
-                print("ERROR: failed to init seg7")
+                print("Seg7: ERROR: failed to init seg7")
             attempts += 1
 
     # @desc display a string of characters (max 4) on the seg7 w/ timing
@@ -37,25 +37,24 @@ class Seg7:
     # @param timeout How long (in seconds) to display the text
     def display(self, text, flash, timeout):
         assert isinstance(text, str)
-        print("Displaying " + text)
         timeout_count = 0
         enabled = True
         while timeout_count < timeout:
             # write "HELO" if display enabled
             if (enabled):
                 try:
-                    self.write("HELO")
-                    print("Hello")
+                    self.write(text)
+                    print("Si7021: Displaying '" + str(text) + "'")
                 except pigpio.error as e:
-                    print("ERROR: failed to write to seg7 over I2C")
+                    print("Si7021: ERROR: failed to write " + str(text) + " seg7 over I2C")
 
             # else clear the display
             else:
                 try:
                     self.write([0x76])
-                    print("Goodbye")
+                    print("Si7021: <flashed off>")
                 except pigpio.error as e:
-                    print("ERROR: failed to write to seg7 over I2C")
+                    print("Si7021: ERROR: failed to write to seg7 over I2C")
 
             # toggle enabled if flash==True
             if flash:

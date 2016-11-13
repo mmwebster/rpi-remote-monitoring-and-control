@@ -38,6 +38,8 @@ class Mailer:
         text = self.msg.as_string() # package the email into a single string
         self.server.sendmail(self.from_address, self.to_address, text)
 
+        print("Mailer: Sent email to " + self.to_address)
+
     # @desc Sends a test email
     def test(self):
         self.send("RPi Test", "Mailer class is functioning properly")

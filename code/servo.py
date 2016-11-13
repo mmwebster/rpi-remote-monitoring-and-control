@@ -44,14 +44,14 @@ class Servo:
     def _initRotateTo(self, degrees):
         duty_cycle = self._degreesToDutyCycle(degrees)
         self.servo.start(duty_cycle) # start at init degree position
-        print("Rotated to " + str(degrees) + self.degree_sign)
+        print("Servo: Rotated to " + str(degrees) + self.degree_sign)
 
     def rotateTo(self, degrees):
         # convert to the duty cycle
         duty_cycle = self._degreesToDutyCycle(degrees)
         # adjust duty cycle
         self.servo.ChangeDutyCycle(duty_cycle)
-        print("Rotated to " + str(degrees) + self.degree_sign)
+        print("Servo: Rotated to " + str(degrees) + self.degree_sign)
 
     def test(self):
         positions = [105, 210, 105, 0]

@@ -57,7 +57,7 @@ class Si7021:
             # read temperature
             t_value = self.readTemperature()
             # print stats
-            print ("Humidity: {:.2f}%, Temperature: {:.2f}" + self.degree_sign + "C").format(rh_value, t_value)
+            print ("Si7021: Humidity: {:.2f}%, Temperature: {:.2f}" + self.degree_sign + "C").format(rh_value, t_value)
             # wait until next iteration
             time.sleep(1)
             # inc ticks

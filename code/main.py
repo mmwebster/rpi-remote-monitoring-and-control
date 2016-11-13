@@ -11,8 +11,6 @@ from pymail import Mailer
 from seg7 import Seg7
 from servo import Servo
 from si7021 import Si7021
-# TODO: import pigpio and pass to seg7 and si7021 instances
-
 
 ##########################################################################################
 # Perform initializations and instantiations
@@ -52,14 +50,19 @@ si7021 = Si7021(pi, 1, 0x40) # start hum. & temp. sensor on I2C bus `1` and addr
 # @desc Definitions for each state of the FSM. They must return a state name
 #       corresponding to the next state. Python doesn't have switch statements,
 #       so using a lookup table to call the handler associated with each state.
+# @note WARNING all timing functions in this tutorial are BLOCKING and must
+#       therefore be used with caution. State transitions and actions will be
+#       postponed until prior timing periods have ended. If your system must
+#       respond quickly to its inputs, refrain from using timing or implement the
+#       non-blocking version using Python's `threading` module.
 ##########################################################################################
 def startupState(data):
     print("Entered STARTUP state")
     # define transitions
     if True:
         # perform outputs
-        # -> display IDLE for 3s
         email.send("RPi Update", "System: STARTUP")
+        # seg7.display()
         return "IDLE"
 def idleState(data):
     print("Entered IDLE state")
