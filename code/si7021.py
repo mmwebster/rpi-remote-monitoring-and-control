@@ -21,11 +21,11 @@ class Si7021:
 
     def readRelativeHumidity(self):
         # Request rel. humidity w/ command: `Measure Relative Humidity, No Hold Master Mode`
-        self.pi.i2c_write_device(si7021, [self.rh_i2c_addr])
+        self.pi.i2c_write_device(self.si7021, [self.rh_i2c_addr])
         time.sleep(0.1) # wait to ensure proper delay
 
         # Read the word written back by the si7021; returns (numBytesRead, [msByte, lsByte])
-        numBytesRead, word = self.pi.i2c_read_device(si7021, 3)
+        numBytesRead, word = self.pi.i2c_read_device(self.si7021, 3)
 
         # Format the word's rel. hum. payload
         rh_code = (word[0] << 8) + word[1]
@@ -35,11 +35,11 @@ class Si7021:
 
     def readTemperature(self):
         # Request temperature w/ command: `Measure Temperature, No Hold Master Mode`
-        self.pi.i2c_write_device(si7021, [self.t_i2c_addr])
+        self.pi.i2c_write_device(self.si7021, [self.t_i2c_addr])
         time.sleep(0.1) # wait to ensure proper delay
 
         # Read the word written back by the si7021; returns (numBytesRead, [msByte, lsByte])
-        numBytesRead, word = self.pi.i2c_read_device(si7021, 3)
+        numBytesRead, word = self.pi.i2c_read_device(self.si7021, 3)
 
         # Format the word's temperature payload
         t_code = (word[0] << 8) + word[1]
@@ -63,5 +63,5 @@ class Si7021:
 
 
     def __exit__(self):
-        self.pi.i2c_close(si7021)
+        self.pi.i2c_close(self.si7021)
         self.pi.stop()
