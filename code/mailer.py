@@ -42,7 +42,8 @@ class Mailer:
 
     # @desc Sends a test email
     def test(self):
-        self.send("RPi Test", "Mailer class is functioning properly")
+        self.send("RPi Test", "Mailer class is...")
+        self.send("RPi Test", "...functioning properly")
 
     def __exit__(self, exc_type, exc, traceback):
         print("Mailer: Exiting, cleaning up")
