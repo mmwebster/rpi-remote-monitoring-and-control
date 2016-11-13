@@ -60,6 +60,8 @@ class Si7021:
             print ("Humidity: {:.2f}%, Temperature: {:.2f}" + self.degree_sign + "C").format(rh_value, t_value)
             # wait until next iteration
             time.sleep(1)
+            # inc ticks
+            ticks += 1
 
 
     def __exit__(self):

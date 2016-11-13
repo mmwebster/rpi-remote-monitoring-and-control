@@ -182,7 +182,7 @@ def main():
     seg7.test()
     servo.test()
     si7021.test()
-    print("All tests passed? Check their outputs")
+    print("All tests passed? Check their outputs to confirm.")
 
 
     # count = 0
