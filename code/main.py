@@ -15,7 +15,7 @@ from si7021 import Si7021
 ##########################################################################################
 # Perform initializations and instantiations
 ##########################################################################################
-h_wet_thresh = 60 # (% humidity) upper threshold for humidity
+h_wet_thresh = 85 # (% humidity) upper threshold for humidity
 h_dry_thresh = 40 # (% humidity) lower threshold for humidity
 t_hot_thresh = 25 # (deg Celcius) upper threshold for temperature
 t_cold_thresh = 18 # (deg Celcius) lower threshold for temperature
@@ -258,7 +258,7 @@ def main():
     next_state = states[start_state]
     # call the state function associated with the current state
     # TODO: remove this counter so that more than 10 transitions can occur
-    while count < 15:
+    while True:
         # get the current inputs
         t = si7021.readTemperature()
         h = si7021.readRelativeHumidity()
