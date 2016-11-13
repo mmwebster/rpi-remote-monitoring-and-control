@@ -16,8 +16,15 @@ class Seg7:
         self.flashSpeed = 0.2 # seconds
 
         # Set cursor position to leftmost digit (position 0)
-        self.write([0x79]) # cursor control byte
-        self.write([0x00]) # data byte specifying pos. 0
+        attempts = 0
+        while attempts < 10:
+            try:
+                self.write([0x79]) # cursor control byte
+                self.write([0x00]) # data byte specifying pos. 0
+                break
+            except pigpio.error as e:
+                print("ERROR: failed to init seg7")
+            attempts += 1
 
     # @desc display a string of characters (max 4) on the seg7 w/ timing
     #       resolution of 1s
