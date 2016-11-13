@@ -238,6 +238,15 @@ def main():
         next_state = states[next_state_str]
         count += 1
 
+
+    # clean up all libs on exit
+    si7021.__exit__(None, None, None)
+    seg7.__exit__(None, None, None)
+    servo.__exit__(None, None, None)
+    mailer.__exit__(None, None, None)
+    # close pi gpio ref
+    pi.stop()
+
 main()
 
 ####
