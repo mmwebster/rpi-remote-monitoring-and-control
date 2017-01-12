@@ -20,6 +20,7 @@
 \usepackage{geometry}
 \usepackage{gensymb}
 \usepackage{siunitx}
+\usepackage{titlesec} % paragraph as section
 % \usepackage{fontspec}
 \tcbuselibrary{listings,skins}
 % document settings
@@ -76,6 +77,13 @@
   linkcolor=my-blue,
   linktoc=all
 }
+
+% paragraph to mimic subsubsubsection header
+\setcounter{secnumdepth}{4}
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+
 \newcommand*{\myfont}{\fontfamily{pcr}\selectfont}
 \newcommand{\codei}[1]{\colorbox{SpringGreen}{\texttt{#1}}} % inline code
 \newcommand{\codeb}[2]{
