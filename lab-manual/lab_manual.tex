@@ -1,8 +1,10 @@
 % compile in vim locally with <colon>,<L>,<tab>,<enter>
+%\documentclass[12pt]{article}
 \documentclass{article}
 % document packages
 \usepackage[utf8]{inputenc}
-\usepackage[margin=1in]{geometry}
+% \usepackage[letterpaper,top=1in, bottom=1in, left=1in, right=1in,showframe]{geometry}
+\usepackage[letterpaper,top=1in, bottom=1in, left=1in, right=1in]{geometry}
 \usepackage{graphicx}
 \usepackage[table, dvipsnames]{xcolor}
 \usepackage{listings}
@@ -25,7 +27,6 @@
 \tcbuselibrary{listings,skins}
 % document settings
 \graphicspath{ {resources/} }
-\addtolength{\topmargin}{-.7in}
 \definecolor{my-blue}{rgb}{0,0.3,.8}
 \definecolor{light-blue}{RGB}{0,210,255}
 \definecolor{light-gray}{gray}{.90}
@@ -78,7 +79,7 @@
   linktoc=all
 }
 
-% paragraph to mimic subsubsubsection header
+% paragraph to mimic subparagraph header
 \setcounter{secnumdepth}{4}
 \titleformat{\paragraph}
 {\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
@@ -143,7 +144,7 @@
 %       Author: Milo Webster
 %       \textbf{Q: what's the authoring format, do I even put my name?}
 %     }
-\date{November 13, 2016}
+\date{January 11, 2017}
 
 \begin{document}
 
@@ -154,9 +155,9 @@
 \section{Introduction}
   \subsection{Summary}
   This manual will detail the process of designing and implementing a remote monitoring and control system using a Raspberry Pi (RPi). This includes initial config and installation of the OS, communicating with the RPi over a TTL Serial connection, configuring SSH and a public IP to remotely connect, communicating with several sensors over SPI and I2C protocols, sending emails and HTTP requests, and using a Finite State Machine (FSM) to define the autonomous behavior of the RPi.
-  The RPi is a very useful instrument for Internet of Things (IoT) type applications, given that it is basically fully featured computer with a small form factor. As a result, many designs are much easier and quicker to implement on an RPi than on a microcontroller. RPis are ideal for embedded applications in which there is not much constraint on the size and power consumption of the system. Upon completion of this module, you should be able to implement not only the particular system covered in this manual, but also another system of your own design.
-
-  \underline{Prerequisites}: It is recommended that you have at least introductory-level programming experience prior to taking this module
+  The RPi is a very useful instrument for Internet of Things (IoT) type applications, given that it is basically a fully featured computer with a small form factor. As a result, many designs are much easier and quicker to implement on an RPi than on a microcontroller. RPis are ideal for embedded applications in which there is not much constraint on the size and power consumption of the system. Upon completion of this module, you should be able to implement not only the particular system covered in this manual, but also another system of your own design.
+  \subsection{Prerequisites}
+  It is recommended that you have introductory-level programming experience prior to taking this module.
   %
   % This manual will not cover how to set up a database to store collected data, or how to set up a website or any other method of consuming HTTP requests.
   %
@@ -202,11 +203,16 @@
       \begin{enumerate}
         \item ...
       \end{enumerate}
-
     \end{enumerate}
-\section{Setting up the Raspberry Pi (RPi)}
+    
+\section{Pre-Lab}
+\underline{\textbf{Basics of Unix shell navigation and interaction}}\newline\newline
+Before attending your first lab session, please complete items 1-6 of this tutorial \newline (\href{http://linuxcommand.org/lc3\_learning\_the\_shell.php}{http://linuxcommand.org/lc3\_learning\_the\_shell.php}) on the basics on navigation in and interaction with the Unix shell.
+    
+\section{Day 1: Configuration and Input}
+\subsection{Setting up the Raspberry Pi (RPi)}
 \underline{\textit{Note}}: Any \outputi{CLI output text} colored in \outputi{\red{red}} indicates that it will likely be different from your.
-  \subsection{Using NOOBS to install the OS (Raspbian)}
+  \subsubsection{Using NOOBS to install the OS (Raspbian)}
   The RPi comes without any installed or configured OS. Follow the tutorial \href{https://www.raspberrypi.org/help/noobs-setup/}{here} to perform the following steps in order to get the RPi up and running:
   \begin{enumerate}
     \item Download NOOBS
@@ -217,10 +223,10 @@
   \end{enumerate}
   \underline{\textit{Note}}: Be sure to choose Raspbian as the OS to install on your RPi, as it will be the OS used for the rest of this manual.
 
-  \subsection{Some RPi basics}
-    \subsubsection{Connecting to a wireless network}
+  \subsubsection{Some RPi basics}
+    \paragraph{Connecting to a wireless network}
     Through the Raspbian GUI, there is a wifi icon in the upper right of the screen with and clicking on this will take you through a straight-forward prompts to connect to a wireless network. If you are currently using your RPi in "Headless" mode (without a monitor..and GUI), \href{https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md}{this guide} details the process of connecting to a wireless network via the command line (command line access is described in the \hyperref[sec:connect-serial]{section 2.3} and \hyperref[sec:connect-ssh]{section 2.4})
-    \subsubsection{Shutting down}
+    \paragraph{Shutting down}
     \label{sec:shutting-down}
     It is important that the RPi is always properly shutdown prior to being disconnected from a power source. If it is not, there is a chance that the OS and other persisted data on the micro SD card will be corrupted. You can properly shutdown the RPi via command line or the Raspbian GUI (Graphical User Interface):
       \begin{enumerate}
@@ -228,10 +234,10 @@
         \item GUI: navigate to \loc{Menu >> Shutdown} and then click on the \textit{Shutdown} option
       \end{enumerate}
 
-  \subsection{Wired connection over TTL Serial}
+  \subsubsection{Wired connection over TTL Serial}
     \label{sec:connect-serial}
     It is often convenient to be able to interface with the RPi with only your personal computer, instead of with the monitor, keyboard, and mouse that were required when installing the OS. A TTL Serial connection between your RPi and computer will allow you to do everything you would normally be able to do through the Raspbian GUI, through the Raspbian CLI via a serial terminal on your computer.
-    \subsubsection{Enable the interfaces}
+    \paragraph{Enable the interfaces}
     To connect over TTL Serial, we must first enable the Serial interface on the RPi. Later on we will also need the SSH, SPI, and I2C interfaces so we'll enable those now as well. Navigate to \loc{Menu >> Preferences >> Raspberry Pi Configuration} as shown in the Figure 1 below.
 
     \imagefig{screen1.png}{RPi Configuration at \loc{Menu >> Preferences >> Raspberry Pi Configuration}}
@@ -241,7 +247,7 @@
 
     Now press \textit{OK}, and reboot the RPi by going to \loc{Menu >> Shutdown} and clicking \textit{Reboot}.
 
-    \subsubsection{Disable bluetooth to free up GPIO 14 \& 15 (TX, RX)}
+    \paragraph{Disable bluetooth to free up GPIO 14 \& 15 (TX, RX)}
     On the Pi 3 Model B, it so happens that the built-in Bluetooth chip consumes GPIO (General-Purpose Input/Output) 14 \& 15 (pins 8 \& 10) that correspond to TX and RX, respectively, that are required for the serial connection. We must now disable this in order to free up these pins. First, open the \textit{Terminal} application to get a CLI Shell into Raspbian. The application can be navigated to by \loc{Menu >> Accessories >> Terminal}. You should now see a window that looks like the following in Figure 3.
     \imagefig{screen3.png}{Raspbian Terminal App (Shell CLI)}
 
@@ -265,7 +271,7 @@
 
     Finally, reboot the RPi to allow the changes to take effect.
 
-    \subsubsection{Download and install the drivers for the TTL Serial cable}
+    \paragraph{Download and install the drivers for the TTL Serial cable}
     There are specific drivers required for this protocol that are available for Mac OSX, Windows, and Linux. Follow the appropriate guide below to download and install the drivers for your computer.
     \begin{itemize}
       \item \href{https://learn.adafruit.com/adafruits-raspberry-pi-lesson-5-using-a-console-cable/software-installation-mac}{\textit{\textbf{Mac OSX}} Download/Installation Guide for TTL Serial Driver}
@@ -273,7 +279,7 @@
       \item \href{https://learn.adafruit.com/adafruits-raspberry-pi-lesson-5-using-a-console-cable/software-installation-linux}{\textit{\textbf{Linux}} Download/Installation Guide for TTL Serial Driver}
     \end{itemize}
 
-    \subsubsection{Connect the leads and USB port}
+    \paragraph{Connect the leads and USB port}
     Now, connect each of the four colored-coded leads on the TTL Serial cable to their corresponding pins on the RPi's GPIO header. VCC and GND have multiple options for pins, but TX and RX must be placed on GPIO 14 \& 15. The following is a recommended configuration of the TTL Serial cable's leads:
     \begin{itemize}
       \item \textbf{VCC}: Pin \textbf{4} (5V)
@@ -286,7 +292,7 @@
 
     \textbf{DO NOT SUPPLY POWER OVER BOTH MICRO USB AND THE SERIAL CABLE} and double check that the leads of the serial cable are connected properly; the RPi is not especially tolerant when it comes to power and can be fried somewhat easily. Once you're certain the leads of the cable are properly connected, plug the USB into your computer and you should see the RPi's power LED indicator turn on as it did when supplied power over micro USB.
 
-    \subsubsection{Testing the connection}
+    \paragraph{Testing the connection}
     Now, all that's neccessary to connect over the serial connection is to open a serial terminal and connect to the right port using \textbf{115200 baud}. \textit{Screen} is a command line serial interface and comes with recent releases of \textit{Mac OSX}. It does not come with all distributions of \textit{Linux}, but can easily be installed using \codei{sudo apt-get install screen}. \textit{Windows} requires an application called \textit{PuTTY} and the process takes slightly longer. \href{https://learn.adafruit.com/adafruits-raspberry-pi-lesson-5-using-a-console-cable/test-and-configure}{This is a guide detailing the complete steps for each operating system.}
     \newline\newline
     \underline{Note:} As indicated in the aformentioned guide, the login credentials for a user with root privileges on the RPi is by default:
@@ -294,30 +300,30 @@
       \item username: \textbf{pi}
       \item password: \textbf{raspberry}
     \end{itemize}
-    \subsection{Wireless connection over LAN via local IP \& SSH}
+    \subsubsection{Wireless connection over LAN via local IP \& SSH}
     \label{sec:connect-ssh}
     Sometimes it is more convenient to connect to the RPi over SSH because of the extra features it provides. Included in these features is a protocol called SFTP (SSH File Transfer Protocol) that makes it quick and easy to transfer files between your computer and the RPi. To connec to your RPi in this manner requires the use of a LAN (Local Area Network) on which both your personal computer and the RPi must be one.
     \newline
     \newline
     \underline{\textit{Note}}: This method only works for local networks and cannot be used to connect to your RPi if both your computer and the RPi are not connected to the same network. See \hyperref[sec:connect-sshwan]{the following section} if you wish to connect to your RPi from a different network than what the RPi is on.
 
-    \subsubsection{Connect the RPi to a local network}
+    \paragraph{Connect the RPi to a local network}
     To connect over SSH or SFTP, the RPi must first be connected to a local network (which was done earlier in this manual)
-    \subsubsection{Determine the RPi's IP address}
+    \paragraph{Determine the RPi's IP address}
     After connecting to your local network, the RPi will be allocated an IP address. To find this, connect to the RPi over serial (as described in \hyperref[sec:connect-serial]{section 2.2}). Then, in the command line run \codei{hostname -I}. This should output something of the form \outputi{\red{\textbf{10.0.1.26} 2601:1c0:5101:1ea8:e2af:7dc1:9da6:2025}}, where the bolded portion is the RPi's IP address. Copy this address to your clipboard.
-    \subsubsection{Making the SSH connection}
+    \paragraph{Making the SSH connection}
     In the command line on your computer, SSH into the RPi by running \codei{ssh pi@\red{<IP-ADDRESS>}} where \codei{\red{<IP-ADDRESS>}} is replaced by the IP address you copied earlier. After running the command, you will be prompted for the password which, unless you changed it, will be its default of \textbf{raspberry}. Once authenticating, you have access command line access to the RPi (same as was achieved over the TTL Serial cable). This connection is, however, dependent on a the existence of a network, wheras the serial connection is not. A complete guide for this method can be found \href{https://www.raspberrypi.org/documentation/remote-access/ssh/}{here}.
-    \subsubsection{Using SFTP to transfer files}
+    \paragraph{Using SFTP to transfer files}
     In a similar way, you can remotely access the RPi over SFTP, which makes file transfer between your computer and the RPi much easier. SFTP into the RPi by running \codei{sftp pi@\red{<IP-ADDRESS>}} in the command line of your computer. Then, you can use some of the standard UNIX commands to navigate through both the file system of the RPi and your computer (except that all commands need to be prefaced with \textbf{l} (letter "ell") indicating the local file system). The commands \codei{get} and \codei{put} can be used to transfer files from the RPi and to the RPi, respectively. A complete guide to using this method can be found \href{https://www.digitalocean.com/community/tutorials/how-to-use-sftp-to-securely-transfer-files-with-a-remote-server}{here}.
     \todo{Add "Wired connection over direct-ethernet via private IP \& SSH"}
     \todo{Add "Wireless connection over global network via public IP \& SSH"}
 
-  \subsection{Wireless connection over WAN via Weaved \& SSH}
+  \subsubsection{Wireless connection over WAN via Weaved \& SSH}
   \label{sec:connect-sshwan}
     Often times you are not in range of the network your RPi is on but still want to connect to it. In this case, where you need to connect to your RPi through a WAN (Wide Area Network), you can use a service called Weaved (\href{https://www.weaved.com}{https://www.weaved.com}). Weaved handles all the potential security risks involved with opening your RPi to the public, and allows you to SSH into it just as is possible through a LAN.
-    \subsubsection{Setup an account at Weaved.com}
+    \paragraph{Setup an account at Weaved.com}
     First, setup a free account at \href{https://developer.weaved.com/portal/index.php}{https://developer.weaved.com/portal/index.php}.
-    \subsubsection{Installed Weaved on the RPi}
+    \paragraph{Installed Weaved on the RPi}
     Next, download and install Weaved onto the RPi but running the following code in the command line (after accessing the command line of the RPi through TTL Serial or LAN SSH):
     \codeb{Download and install Weaved to the RPi}
     {
@@ -336,7 +342,7 @@
       \item Select \#3: \textit{Exit}
     \end{enumerate}
     Weaved should now be properly configured on your RPi.
-    \subsubsection{Connecting to the RPi over SSH with Weaved}
+    \paragraph{Connecting to the RPi over SSH with Weaved}
     Follow this procedure to SSH into your RPi with Weaved:
     \begin{enumerate}
       \item Login to your Weaved account here: \href{https://developer.weaved.com/portal/login.php}{https://developer.weaved.com/portal/login.php}.
@@ -347,11 +353,11 @@
     You should now be prompted for the password of your RPi's \textit{pi} user, after which you will have a command line into your RPi.
     \note{The host and port copied from Weaved.com are dynamically generated and only valid for 30 minutes (with the free version). To reconnect after 30 minutes, you will have to repeat steps 2 \& 3 above. The paid versions of Weaved extend the lifetime of SSH credentials. Also, they have a free mobile app that in which you can also issue SSH credentials for your RPi.}
 
-\section{Sensor inputs}
-    \subsection{Communicating with the si7021 humidity and temperature sensor (over I2C)}
+\subsection{Sensor inputs}
+    \subsubsection{Communicating with the si7021 humidity and temperature sensor (over I2C)}
   The RPi is nothing more than your personal computer if not given the chance to interact with its environment. The 40 pins in the GPIO header are what allow the RPi to do this. They provide a number of interfaces, one of which (Serial) was already implemented earlier in this manual, that can be used to communicate with a variety of sensors. I2C is the protocol that the humidity and temperature sensor (si7021) uses, and so that is how we will implement it in this section.
   \newline\newline\underline{\textit{Note}}: This section is tailored to connecting to the RPi over TTL Serial, however the same procedure can be carried out \hyperref[sec:connect-ssh]{over SSH}. It is also tailored the \textit{GNU nano} editor. \href{http://www.howtogeek.com/howto/42980/the-beginners-guide-to-nano-the-linux-command-line-text-editor/}{You can find out more about how to use nano in this guide.}
-    \subsubsection{Configuring I2C}
+    \paragraph{Configuring I2C}
       \label{sec:configuring-i2c}
       I2C must be configured, as by default, it is neither enabled nor is its kernel module loaded at boot time. As a result of some prior steps in this manual, the steps in this section are likely unnecessary, but it's a good idea to go through them anyway. Make sure that you have a serial connection with the RPi. If you're unsure of this, refer back to \hyperref[sec:connect-serial]{section 2.3}.
       \newline
@@ -362,7 +368,7 @@
       Next, make sure that the I2C kernel module is loaded at boot time by running \codei{sudo nano /etc/modules} to open the file and append to it the line \outputi{i2c-dev} if it does not already exist.
       \newline
       \indent
-    \subsubsection{Install packages and probe the I2C interface}
+    \paragraph{Install packages and probe the I2C interface}
     Run the following:
     \codeb{Update environment and install necessary packages}{
       sudo apt-get update \\
@@ -390,7 +396,7 @@
 
     This output indicates that none of the 128 (hexadecimal 0x0 to 0x7f) I2C addresses are being used (the si7021 sensor is not connected) but the I2C interface has been properly configured.
 
-  \subsubsection{Wiring the si7021 sensor to the RPi}
+  \paragraph{Wiring the si7021 sensor to the RPi}
   We must now wire the temperature and humidity sensor to the RPi. To do this, we'll need the breadboard and jumper cables included in the materials list at the beginning of this manual. Using these materials, connect the si7021 to the RPi according to the wiring diagram below. But first, make sure that you are aware of the following:
   \begin{enumerate}
     \item \textbf{DO NOT} change the wiring of your system while the RPi is still powered on. Instead, \hyperref[sec:shutting-down]{shutdown the pi}, then unplug it from the power source. This is done to prevent short circuits and other dangers while re-wiring your system.
@@ -399,7 +405,7 @@
 
     \imagefigb{si7021-wiring-diagram.png}{Wiring diagram for connecting the si7021 to the RPi over I2C}
 
-  \subsubsection{Testing the wiring}
+  \paragraph{Testing the wiring}
   There are many ways to test for faulty wiring, however in this case, it is easiest to just the I2C interface detection tool to confirm that the si7021 is properly wired. First, plug the Pi back into your computer and get the serial connection running again. Then, run the same command from before \codei{i2cdetect -y 1}. The output should now indicate that there is an I2C device connected using address 0x40, having somethign similar to the following form:
   \outputb{I2C detection output (si7021 wired)}
   {
@@ -417,7 +423,7 @@
 
   If the detection utility does not indicate that I2C address 0x40 is active, double check that you have properly wired the sensor to the RPi. If the problem persists (\textit{i2cdetect} does not indicate address 0x40), it is possible that you have fried the sensor and/or the RPi, but while troubleshooting this should be a last resort.
 
-  \subsubsection{Daemonizing the \textit{pigpiod} program}
+  \paragraph{Daemonizing the \textit{pigpiod} program}
     Before we can talk with the si7021 from the context of Python (the programming language used in this manual), we must first daemonize the program that coordinates with the Python I2C module to make it easy to communciate with sensors over I2C via Python. In the command line, run the following commands:
     \codeb{Prep the environment and locate \textit{pigpiod}}
     {
@@ -444,7 +450,7 @@
     Now save the file and exit the editor. To allow the changes to take effect, reboot the RPi by running \codei{sudo reboot} and login again once the prompt appears. Test that the \textit{pigpiod} program was successfully daemonized by running \codei{pgrep pigpiod}. If this outputs a single number (its process id) to the screen, then the program was sucessfully daemonized. If not, review the previous steps to make sure that nothing was missed.
 
 
-  \subsubsection{Talking to the si7021 with Python}
+  \paragraph{Talking to the si7021 with Python}
     The next natural step is to talk to the newly installed sensor from the context of a Python script to get back readings for humidity and temperature. In the command line, create and navigate to a workspace for your python code on the desktop by running the follow:
     \codeb{Create and navigate to your workspace}
     {
@@ -481,11 +487,13 @@
 
     \todo{Detail installation process for \textit{pigpio}}
     \todo{Confirm that the \textit{python-smbus} module is necessary}
-\section{Sensor outputs}
+    
+\section{Day 2: Local and Remote Output}
+\subsection{Sensor outputs}
   In this section, it will be assumed that I2C is already fully configured on your RPi. If this is not the case, refer back to \hyperref[sec:configuring-i2c]{section 3.1.1}. It is now necessary to set up some outputs for this system to get feedback from the sensor and interact with the environment.
-  \subsection{Communicating with the 7-segment display (over I2C)}
+  \subsubsection{Communicating with the 7-segment display (over I2C)}
   The 7-segment display (refferred from now on as the seg7) supports a variety of communications protocols, however for convenience, we will use I2C just as for the si7021. If you would like more information about the seg7 used in this manual, its documentation can be found here \newline\href{https://github.com/sparkfun/Serial7SegmentDisplay/wiki/Serial-7-Segment-Display-Datasheet}{https://github.com/sparkfun/Serial7SegmentDisplay/wiki/Serial-7-Segment-Display-Datasheet}.
-    \subsubsection{Wiring the seg7 display to the RPi}
+    \paragraph{Wiring the seg7 display to the RPi}
     First, the seg7 must be wired to the RPi. As with the si7021, we'll need the breadboard and jumper cables included in the materials list at the beginning of this manual. Using these materials, connect the seg7 to the RPi, next to the si7021, according to the wiring diagram below. And again, make sure that you are aware of the following points prior to wiring this system:
     \begin{enumerate}
       \item \textbf{DO NOT} change the wiring of your system while the RPi is still powered on. Instead, \hyperref[sec:shutting-down]{shutdown the pi}, then unplug it from the power source. This is done to prevent short circuits and other dangers while re-wiring your system.
@@ -500,7 +508,7 @@
     \newline
     \noindent
     \imagefigb{si7021-seg7-wiring-diagram.png}{Wiring diagram for connecting the seg7 (along with si7021) to the RPi over I2C}
-  \subsubsection{Testing the wiring}
+  \paragraph{Testing the wiring}
   As with the si7021, we must now check that the seg7 was wired properly to the RPi using the same \textit{i2cdetect} tool in the command line on the RPi. Plug in the RPi back into your computer over the TTL Serial connection and login with the same default Raspbian login credentials for the \textit{pi} user before. Then run the command \codei{i2cdetect -y 1}. The output should now, if the seg7 was wired properly, indicate that there are two I2C devices connected over addresses 0x40 and 0x71, having a similar form as the following:
   \outputb{I2C detection output (seg7 and si7021 both wired)}
  {
@@ -516,7 +524,7 @@
     70: -- 71 -- -- -- -- -- --
   }
   If this command does not indicate that address 0x71 is active, double check that the seg7 was wired to the RPi properly.
-  \subsubsection{Writing to the seg7 with Python}
+  \paragraph{Writing to the seg7 with Python}
   The seg7 can display most characters logically displayable on 7 segments. This includes characters such as \textbf{0-9} and \textbf{A-F}, but does not includes characters such as \textbf{v}. There are three basic operations that can be performed on the seg7 display:
 
   \begin{enumerate}
@@ -563,17 +571,17 @@
     ...
   }
   And you should see the text "HELO" flashing on the 7 segment display that you connected to your RPi.
-  \subsection{Using the servo motor}
+  \subsubsection{Using the servo motor}
   This section will cover the implementation of a servo motor using PWM (Pulse Width Modulation) via the Python RPi.GPIO package. For more information on controlling servos with PWM, this wikipedia article has a very complete overview: \href{https://en.wikipedia.org/wiki/Servo\_control}{https://en.wikipedia.org/wiki/Servo\_control}. And this contains a collection of helpful PWM resources: \href{https://learn.sparkfun.com/tutorials/pulse-width-modulation/duty-cycle}{https://learn.sparkfun.com/tutorials/pulse-width-modulation/duty-cycle}.
 
-    \subsubsection{Overview of controlling the servo with PWM}
+    \paragraph{Overview of controlling the servo with PWM}
     PWM requires is a method of controlling the following properties of a signal in order to digitally vary its voltage or move a servo to a specific degree rotation.
     \begin{enumerate}
       \item \underline{Duty Cycle}: This is the percentage of the signal that is high. A 50\% duty cycle means that the signal will by high 50\% of the time, and low the other 50\%.
       \item \underline{Frequency}: This is the rate of oscillation of the signal from low to high. A common frequency for servos is 50Hz, but this can vary from servo to servo.
     \end{enumerate}
 
-    \subsubsection{Wiring the servo motor to the RPi and battery pack}
+    \paragraph{Wiring the servo motor to the RPi and battery pack}
     Most servo motors have the following pins on them:
     \begin{enumerate}
       \item \underline{VCC}: The servo listed in \hyperref[sec:materials]{Materials} requires a positive supply of 4.5V to 6V
@@ -586,7 +594,7 @@
     Next, place the male-male header onto the the female leads of the servo. Then, connect the servo, battery pack, and RPi together according to the following wiring diagram (this diagram was made on top of that for the si7021 sensor and seg7 display):
     \imagefigb{si7021-seg7-servo-wiring-diagram.png}{Wiring diagram for connecting the servo \& battery pack (along with si7021 and seg7) to the RPi to control over PWM}
 
-    \subsubsection{Controlling the servo with Python}
+    \paragraph{Controlling the servo with Python}
     In Python, the servo can be moved to different angles by varying the duty cycle of the 50Hz (the frequency this servo requires) signal. It turns out that the range of duty cycles for this servo is \textasciitilde2.1\% (\textasciitilde210\degree) to \textasciitilde12.4\% (0\degree). To control the PWM signal from coming from the RPi using Python, we will actually be implementing software driven (as opposed to hardware driven) PWM. This means that we can map any of the RPi's GPIO to as many servos as there are GPIO, instead of only being able as many servos as there are PWM supported pins on a board. The draw back to software driven PWM is that it is only accurate within \SI{100}{\micro\second}, whereas hardware driven PWM is accurate within \SI{1}{\micro\second}. This innacuracy results in servo "jitter", but this can be mitigated with some techniques on the programming side. Now, as with the other Python sensor tests, get back into you RPi's command line and run the following to navigate back to your workspace:
     \codeb{Navigate to your workspace}
     {
@@ -617,15 +625,15 @@
       Rotated to 0\degree
     }
     And the servo motor should rotate between these points.
-\section{Remote outputs}
+\subsection{Remote outputs}
 The RPi will need some way to to send you feedback of its state (and the state of its environment) when you are not in its general vicinity. This is the meaning of a remote output.
-  \subsection{Sending an email with Gmail and Python}
+  \subsubsection{Sending an email with Gmail and Python}
   One method for remote output is sending an email. Python makes this process very easy, in fact, no additional packages need to be installed for this to work. Everything that is required is already installed and configured on your RPi.
-    \subsubsection{Create a gmail account}
+    \paragraph{Create a gmail account}
     This manual will be tailored to using a gmail smtp server, however a similar method can be used with other email providers. To authenticate into your gmail account from a Python script, you will need to change your security settings. This does change will make it easier for attackers to get into your account, so if you value your personal gmail account, it is suggested that you create a new, free one at \href{https://www.gmail.com}{https://www.gmail.com}.
-    \subsubsection{Enable "less secure apps"}
+    \paragraph{Enable "less secure apps"}
     To authenticate into your gmail account from a Python script, you need to turn on the "Access for less secure apps" setting in your gmail account here: \href{https://www.google.com/settings/security/lesssecureapps}{https://www.google.com/settings/security/lesssecureapps}. As mentioned in the previous section, this does less make your account more vulnerable to attacks, so it is advised that you create a new account. Make sure that when you enable this option via the above URL, you are logged in to the account you wish to use.
-    \subsubsection{Write and execute the Python script}
+    \paragraph{Write and execute the Python script}
     To send the email from your RPi, navigate back into your workspace after once again accessing your RPi's command line.
     \codeb{Navigate to your workspace}
     {
@@ -647,11 +655,13 @@ The RPi will need some way to to send you feedback of its state (and the state o
       python email-test.py
     }
     You should then receive an email at the \textit{to\_address} you specified, after the script has finished running.
-\section{The state machine}
+    
+\section{Day 3: Improved Autonomy}
+\subsection{The state machine}
 A state machine is a programming model that discretely defines the behavior of a system over its lifetime. Simply put, it is where we define what our system does and when.
-  \subsection{Designing the state machine}
+  \subsubsection{Designing the state machine}
   The are a number of types of state machines, but one of the more common, and the one we will use, is a Finite State Machine (FSM). Exactly as its name describes, an FSM has a finite number of states that can be transitioned to. Our state machine will also have the sub-classification of a Meally, where its current output(s) is/are determined by both the current input(s) and the current state. If you wish to find out more information on FSMs beyond the scope of this manual, this article has a very complete
-    \subsubsection{Outlining the high-level behavior}
+    \paragraph{Outlining the high-level behavior}
     At a high-level, the state machine will function such that it outputs the following under the corresponding conditions.
     \begin{enumerate}
       \item 7 segment display:
@@ -671,37 +681,34 @@ A state machine is a programming model that discretely defines the behavior of a
           \item Upon transitioning from a WET/DRY/HOT/COLD state to the IDLE state, it will email you such
         \end{enumerate}
     \end{enumerate}
-    \subsubsection{The state diagram}
+    \paragraph{The state diagram}
       The next step in the design is to synthesize these high-level behaviors into a finite set of states, transitions, inputs, and outputs that discretely define this behavior. The primary dangers in this step include \textbf{1) defining transitions based on combinations of inputs that aren't mutually exclusive} and \textbf{2) not spanning all possible combinations of inputs with the transitions defined}. If, for a state in which only $n$ boolean inputs are of concern, a transition doesn't evaulate for each $2^n$ possible combination of inputs, the FSM will exhibit undefined behavior. On the other hand, if each defined transition is not a unique combination of inputs, then it is possible for multiple defined transitions to evaluate which will also cause undefined behavior. Keeping these two dangers in mind, the following is a state diagram for the FSM we will use, with a fully spanned set of unique transitions for each state.
       \imagefigb{fsm-slab.png}{State diagram for Finite State Machine}
       \noindent
       \note{This system is in a fictional environment in which turning the servo clockwise (up) decreases humidity and increases temperature, and turning the servo counter-clockwise (down) increases humidity and decreases temperature. Also to note, inputs from the IDLE state corresponding to multiple of WET/COLD/HOT/DRY are not explicitly spanned by the transition conditions, but allowed to default to the first evaluated. (e.g. if (h > h\_wet\_thresh) AND (t < t\_cold\_thresh), the FSM will enter the WET state and not the COLD state)}
-  \subsection{Implementing the state machine}
+  \subsubsection{Implementing the state machine}
     \underline{\textit{Note}}: This section of the manual assume that you are no longer using the RPi in headless mode.
 
     To implement this state machine, first, download a zip contain the module code here: href{https://github.com/mmwebster/rpi-remote-monitoring-and-control}{https://github.com/mmwebster/rpi-remote-monitoring-and-control}. Then, copy the "code" directory into your python workspace. Now the only step necessary to run the entire FSM is to execute \codei{python main.py} in the command line.
     \todo{Change every reference to "GPIO 25" to "GPIO 4", as this is the new wiring setup used and the GPIO number used in the codebase}
     \todo{Discuss implementing a secrets.py with a .gitignore file so that private credentials are not uploaded to the web.}
 
-  \subsection{Daemonizing the FSM (main.py)}
-    \subsubsection{Installing Supervisor}
-    \subsubsection{Configuring Supervisor}
-    \subsubsection{Daemonizing main.py with Supervisor}
+  \subsubsection{Daemonizing the FSM (main.py)}
+    \paragraph{Installing Supervisor}
+    \paragraph{Configuring Supervisor}
+    \paragraph{Daemonizing main.py with Supervisor}
 
 
-\section{Data Analysis}
+\subsection{Data Analysis}
 Some simple data recording and analysis can be performed by outputting sensor data to a CSV file with Python. From there it is trivial to import into Excel or Google Sheets to perform analysis as desired. To do this, we will save sensor data into a separate file for every day, in which will be the fields time (timestamp), humidity (\%), and temperature.(\degree C).
-  \subsection{Save sensor data to CSV files with Python}
+  \subsubsection{Save sensor data to CSV files with Python}
   We will modify the previous state machine code to include a few lines to append to a CSV file with the current sensor data every 8 seconds, which will result in about 10k entries in every day's CSV file. First, ...
   \todo{Add stuff about saving data to csv files for every day with fields of (time,relHum,temp) that can import into Excel or Google Sheets to calculate some metrics on}
-\section{Pre-Lab}
-  Please have the following steps completed prior to coming to the first lab session for this module.
-  \subsection{...}
     ...
-% \section{Appendix}
+% \subsection{Appendix}
 \begin{appendices}
 %  An Appendix contains information that is non-essential to understanding of the paper, but may present information that further clarifies a point without burdening the body of the presentation
-  \section{Suggested Material Vendors}
+  \subsection{Suggested Material Vendors}
       \begin{enumerate}
         \item \href{https://www.sparkfun.com/products/13825}{Raspberry Pi 3 Model B (Most of this manual will apply to other versions and models as well, however it is tailored to this particular version and model of the RPi.)}
           \label{sec:vendor-rpi}
