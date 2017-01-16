@@ -119,6 +119,13 @@
         \caption{#2}
     \end{figure}
 }
+\newcommand{\imagefigs}[2]{
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=.4\textwidth]{#1}
+        \caption{#2}
+    \end{figure}
+}
 \newcommand{\todo}[1]{\newline\noindent\colorbox{Yellow}{>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>}\newline\colorbox{Yellow}{\textbf{TODO}}: - #1 \newline \colorbox{Yellow}{<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<}\newline}
 \newcommand{\createterm}[3]{
       \item \href{#1}{#2}: #3
@@ -130,10 +137,19 @@
   \note{When copying the above code, make sure that you do not copy the page number in between the two pages.}
 }
 
+\newcommand{\checkpoint}[2]{
+    \newline \newline
+    \noindent
+    \colorbox{Orange}{\textbf{CHECKPOINT}: #1} \newline \colorbox{Orange}{#2}
+    \newline \newline
+}
+
+
 % document header
 \title{
   UC Santa Cruz, S-Lab \\
-  \colorbox{BurntOrange}{\textbf{Remote Monitoring and Control w/ a Raspberry Pi}} \\
+%   \colorbox{BurntOrange}{\textbf{Remote Monitoring and Control w/ a Raspberry Pi}} \\
+  \textbf{Remote Monitoring and Control w/ a Raspberry Pi} \\
   Prototyping a remote monitoring and control system \\
   using a Raspberry Pi \\
   % \colorbox{BurntOrange}{Q: module name?}
@@ -144,7 +160,7 @@
 %       Author: Milo Webster
 %       \textbf{Q: what's the authoring format, do I even put my name?}
 %     }
-\date{January 11, 2017}
+\date{January 16, 2017}
 
 \begin{document}
 
@@ -161,7 +177,7 @@
   %
   % This manual will not cover how to set up a database to store collected data, or how to set up a website or any other method of consuming HTTP requests.
   %
-  \subsection{Definitions and Terminology}
+  \subsection{Definitions and terminology}
     \begin{enumerate}
       \createterm{https://en.wikipedia.org/wiki/Raspberry\_Pi}{RPi (Raspberry Pi)}{An awesome prototyping board that features a plethora advances hardware and utilities made incredibly easy to interface with}
       \createterm{https://www.raspberrypi.org/blog/introducing-noobs/}{NOOBS (New Out Of Box Software)}{A software package for the RPi that makes installing the OS on an unconfigured RPi "much, much easier."}
@@ -205,9 +221,25 @@
       \end{enumerate}
     \end{enumerate}
     
+  \subsection{Learning outcomes}
+  After completing this tutorial you should be able to do the following:
+  \begin{enumerate}
+      \item Configure a Raspberry Pi for headless mode and control it over a serial connection to your computer
+      \item Connect to and run operations on your Raspberry Pi over LAN and WAN via SSH and SFTP
+      \item Communicate over SPI and I2C with sensors and store their inputs
+      \item Drive a servo to actuate mechanical systems
+      \item Program intelligent, autonomous logic with Finite State Machines (Note that this implementation uses Python's blocking sleep() function for timing events and is therefore not immediately responsive to sudden changes in inputs. Non-blocking style can be implemented using Python's multithreading library)
+      \item Collect and remotely transmit (email) sensor data for later analysis
+  \end{enumerate}
+    
+    
 \section{Pre-Lab}
-\underline{\textbf{Basics of Unix shell navigation and interaction}}\newline\newline
+\subsection{Basics of Unix shell navigation and interaction}
 Before attending your first lab session, please complete items 1-6 of this tutorial \newline (\href{http://linuxcommand.org/lc3\_learning\_the\_shell.php}{http://linuxcommand.org/lc3\_learning\_the\_shell.php}) on the basics on navigation in and interaction with the Unix shell.
+
+\subsection{Basics of programming in Python}
+It is recommended, if you do not have prior experience with Python, to complete the "Learn the Basics" portion of this tutorial (
+\href{https://www.learnpython.org/en/Welcome}{https://www.learnpython.org/en/Welcome}) to gather a working knowledge of Python.
     
 \section{Day 1: Configuration and Input}
 \subsection{Setting up the Raspberry Pi (RPi)}
@@ -280,7 +312,7 @@ Before attending your first lab session, please complete items 1-6 of this tutor
     \end{itemize}
 
     \paragraph{Connect the leads and USB port}
-    Now, connect each of the four colored-coded leads on the TTL Serial cable to their corresponding pins on the RPi's GPIO header. VCC and GND have multiple options for pins, but TX and RX must be placed on GPIO 14 \& 15. The following is a recommended configuration of the TTL Serial cable's leads:
+    Now, connect each of the four color-coded leads on the TTL Serial cable to their corresponding pins on the RPi's GPIO header. VCC and GND have multiple options for pins, but TX and RX must be placed on GPIO 14 \& 15. The following is a recommended configuration of the TTL Serial cable's leads:
     \begin{itemize}
       \item \textbf{VCC}: Pin \textbf{4} (5V)
       \item \textbf{GND}: Pin \textbf{6} (Ground)
@@ -288,9 +320,11 @@ Before attending your first lab session, please complete items 1-6 of this tutor
       \item \textbf{RX }: Pin \textbf{10} (GPIO 15)
     \end{itemize}
     \underline{\textit{Note}}: Depending on where you purchased your cable, the leads are likely colored for \textbf{TX either white or orange} and \textbf{RX either green or yellow}. VCC is always colored red and GND always black.
-    \imagefig{rpi3mb-gpio.png}{Raspberry Pi 3 Model B, GPIO header. \colorbox{BurntOrange}{Photo credit: \href{http://blog.mcmelectronics.com/post/Raspberry-Pi-3-GPIO-Pin-Layout}{mcmelectronics.com}}}
+    \imagefig{rpi3mb-gpio.png}{Raspberry Pi 3 Model B, GPIO header. Photo credit: \href{http://blog.mcmelectronics.com/post/Raspberry-Pi-3-GPIO-Pin-Layout}{mcmelectronics.com}}
 
-    \textbf{DO NOT SUPPLY POWER OVER BOTH MICRO USB AND THE SERIAL CABLE} and double check that the leads of the serial cable are connected properly; the RPi is not especially tolerant when it comes to power and can be fried somewhat easily. Once you're certain the leads of the cable are properly connected, plug the USB into your computer and you should see the RPi's power LED indicator turn on as it did when supplied power over micro USB.
+    \checkpoint{Before proceeding, please confirm with your lab instructor that you have correctly}{wired your TTL Serial Cable.}
+
+    \textbf{DO NOT SUPPLY POWER OVER BOTH THE MICRO USB AND THE SERIAL CABLE} and double check that the leads of the serial cable are connected properly; the RPi is not especially tolerant when it comes to power and can be fried somewhat easily. Once you're certain the leads of the cable are properly connected, plug the USB into your computer and you should see the RPi's power LED indicator turn on as it did when supplied power over micro USB.
 
     \paragraph{Testing the connection}
     Now, all that's neccessary to connect over the serial connection is to open a serial terminal and connect to the right port using \textbf{115200 baud}. \textit{Screen} is a command line serial interface and comes with recent releases of \textit{Mac OSX}. It does not come with all distributions of \textit{Linux}, but can easily be installed using \codei{sudo apt-get install screen}. \textit{Windows} requires an application called \textit{PuTTY} and the process takes slightly longer. \href{https://learn.adafruit.com/adafruits-raspberry-pi-lesson-5-using-a-console-cable/test-and-configure}{This is a guide detailing the complete steps for each operating system.}
@@ -316,14 +350,13 @@ Before attending your first lab session, please complete items 1-6 of this tutor
     \paragraph{Using SFTP to transfer files}
     In a similar way, you can remotely access the RPi over SFTP, which makes file transfer between your computer and the RPi much easier. SFTP into the RPi by running \codei{sftp pi@\red{<IP-ADDRESS>}} in the command line of your computer. Then, you can use some of the standard UNIX commands to navigate through both the file system of the RPi and your computer (except that all commands need to be prefaced with \textbf{l} (letter "ell") indicating the local file system). The commands \codei{get} and \codei{put} can be used to transfer files from the RPi and to the RPi, respectively. A complete guide to using this method can be found \href{https://www.digitalocean.com/community/tutorials/how-to-use-sftp-to-securely-transfer-files-with-a-remote-server}{here}.
     \todo{Add "Wired connection over direct-ethernet via private IP \& SSH"}
-    \todo{Add "Wireless connection over global network via public IP \& SSH"}
 
   \subsubsection{Wireless connection over WAN via Weaved \& SSH}
   \label{sec:connect-sshwan}
     Often times you are not in range of the network your RPi is on but still want to connect to it. In this case, where you need to connect to your RPi through a WAN (Wide Area Network), you can use a service called Weaved (\href{https://www.weaved.com}{https://www.weaved.com}). Weaved handles all the potential security risks involved with opening your RPi to the public, and allows you to SSH into it just as is possible through a LAN.
     \paragraph{Setup an account at Weaved.com}
     First, setup a free account at \href{https://developer.weaved.com/portal/index.php}{https://developer.weaved.com/portal/index.php}.
-    \paragraph{Installed Weaved on the RPi}
+    \paragraph{Install Weaved on the RPi}
     Next, download and install Weaved onto the RPi but running the following code in the command line (after accessing the command line of the RPi through TTL Serial or LAN SSH):
     \codeb{Download and install Weaved to the RPi}
     {
@@ -404,6 +437,7 @@ Before attending your first lab session, please complete items 1-6 of this tutor
   \end{enumerate}
 
     \imagefigb{si7021-wiring-diagram.png}{Wiring diagram for connecting the si7021 to the RPi over I2C}
+    \checkpoint{Before proceeding, please confirm with your lab instructor that you have correctly}{wired your si7021 to the RPi.}
 
   \paragraph{Testing the wiring}
   There are many ways to test for faulty wiring, however in this case, it is easiest to just the I2C interface detection tool to confirm that the si7021 is properly wired. First, plug the Pi back into your computer and get the serial connection running again. Then, run the same command from before \codei{i2cdetect -y 1}. The output should now indicate that there is an I2C device connected using address 0x40, having somethign similar to the following form:
@@ -484,9 +518,6 @@ Before attending your first lab session, please complete items 1-6 of this tutor
       Humidity: 60.90\%, Temperature: 19.35\degree C                                   \\
       ...
     }
-
-    \todo{Detail installation process for \textit{pigpio}}
-    \todo{Confirm that the \textit{python-smbus} module is necessary}
     
 \section{Day 2: Local and Remote Output}
 \subsection{Sensor outputs}
@@ -508,6 +539,7 @@ Before attending your first lab session, please complete items 1-6 of this tutor
     \newline
     \noindent
     \imagefigb{si7021-seg7-wiring-diagram.png}{Wiring diagram for connecting the seg7 (along with si7021) to the RPi over I2C}
+    \checkpoint{Before proceeding, please confirm with your lab instructor that you have correctly}{wired your si7021 and seg7 display to the RPi.}
   \paragraph{Testing the wiring}
   As with the si7021, we must now check that the seg7 was wired properly to the RPi using the same \textit{i2cdetect} tool in the command line on the RPi. Plug in the RPi back into your computer over the TTL Serial connection and login with the same default Raspbian login credentials for the \textit{pi} user before. Then run the command \codei{i2cdetect -y 1}. The output should now, if the seg7 was wired properly, indicate that there are two I2C devices connected over addresses 0x40 and 0x71, having a similar form as the following:
   \outputb{I2C detection output (seg7 and si7021 both wired)}
@@ -592,8 +624,8 @@ Before attending your first lab session, please complete items 1-6 of this tutor
     \newline
     \indent
     Next, place the male-male header onto the the female leads of the servo. Then, connect the servo, battery pack, and RPi together according to the following wiring diagram (this diagram was made on top of that for the si7021 sensor and seg7 display):
-    \imagefigb{si7021-seg7-servo-wiring-diagram.png}{Wiring diagram for connecting the servo \& battery pack (along with si7021 and seg7) to the RPi to control over PWM}
-
+    \imagefigb{si7021-seg7-servo-wiring-diagram-v2.png}{Wiring diagram for connecting the servo \& battery pack (along with si7021 and seg7) to the RPi to control over PWM}
+    \checkpoint{Before proceeding, please confirm with your lab instructor that you have correctly}{wired your si7021, seg7 display, and servo to the RPi.}
     \paragraph{Controlling the servo with Python}
     In Python, the servo can be moved to different angles by varying the duty cycle of the 50Hz (the frequency this servo requires) signal. It turns out that the range of duty cycles for this servo is \textasciitilde2.1\% (\textasciitilde210\degree) to \textasciitilde12.4\% (0\degree). To control the PWM signal from coming from the RPi using Python, we will actually be implementing software driven (as opposed to hardware driven) PWM. This means that we can map any of the RPi's GPIO to as many servos as there are GPIO, instead of only being able as many servos as there are PWM supported pins on a board. The draw back to software driven PWM is that it is only accurate within \SI{100}{\micro\second}, whereas hardware driven PWM is accurate within \SI{1}{\micro\second}. This innacuracy results in servo "jitter", but this can be mitigated with some techniques on the programming side. Now, as with the other Python sensor tests, get back into you RPi's command line and run the following to navigate back to your workspace:
     \codeb{Navigate to your workspace}
@@ -688,15 +720,26 @@ A state machine is a programming model that discretely defines the behavior of a
       \note{This system is in a fictional environment in which turning the servo clockwise (up) decreases humidity and increases temperature, and turning the servo counter-clockwise (down) increases humidity and decreases temperature. Also to note, inputs from the IDLE state corresponding to multiple of WET/COLD/HOT/DRY are not explicitly spanned by the transition conditions, but allowed to default to the first evaluated. (e.g. if (h > h\_wet\_thresh) AND (t < t\_cold\_thresh), the FSM will enter the WET state and not the COLD state)}
   \subsubsection{Implementing the state machine}
     \underline{\textit{Note}}: This section of the manual assume that you are no longer using the RPi in headless mode.
+    \newline\newline \noindent
+    To implement this state machine, first, download a zip contain the module code here:\newline \href{https://github.com/mmwebster/rpi-remote-monitoring-and-control}{https://github.com/mmwebster/rpi-remote-monitoring-and-control}. Then, copy the "code" directory into your python workspace. Now the only step necessary to run the entire FSM is to execute \codei{python main.py} in the command line.
+    \paragraph{Implementing a .gitignore'd secrets.py}
+    There is one last step required to implement the state machine such that you receive email alerts. You must create a \codei{secrets.py} file that contains your passwords and other credentials for your SMTP email. It should be in the code's top-level directory with the following form:
+    \lstinputlisting[language=Python, caption=Example secrets.py]{example-secrets-tex.py}
 
-    To implement this state machine, first, download a zip contain the module code here: href{https://github.com/mmwebster/rpi-remote-monitoring-and-control}{https://github.com/mmwebster/rpi-remote-monitoring-and-control}. Then, copy the "code" directory into your python workspace. Now the only step necessary to run the entire FSM is to execute \codei{python main.py} in the command line.
-    \todo{Change every reference to "GPIO 25" to "GPIO 4", as this is the new wiring setup used and the GPIO number used in the codebase}
-    \todo{Discuss implementing a secrets.py with a .gitignore file so that private credentials are not uploaded to the web.}
 
+  \todo{Complete daemonization section}
   \subsubsection{Daemonizing the FSM (main.py)}
-    \paragraph{Installing Supervisor}
-    \paragraph{Configuring Supervisor}
-    \paragraph{Daemonizing main.py with Supervisor}
+    \paragraph{Installing PM2}
+    Run the following to update the RPi's packages and system, then install NPM and PM2:
+    \codeb{Update RPi and install NPM and PM2}{
+        sudo apt-get update \\
+        sudo apt-get upgrade \\
+        sudo apt-get install nodejs pm2 \\
+        sudo npm install -g pm2 \\
+    }
+    \paragraph{Configuring PM2}
+    You should now be able to view all of PM2's active processes by ...
+    \paragraph{Daemonizing main.py with PM2}
 
 
 \subsection{Data Analysis}
@@ -709,28 +752,27 @@ Some simple data recording and analysis can be performed by outputting sensor da
 \begin{appendices}
 %  An Appendix contains information that is non-essential to understanding of the paper, but may present information that further clarifies a point without burdening the body of the presentation
   \subsection{Suggested Material Vendors}
-      \begin{enumerate}
-        \item \href{https://www.sparkfun.com/products/13825}{Raspberry Pi 3 Model B (Most of this manual will apply to other versions and models as well, however it is tailored to this particular version and model of the RPi.)}
-          \label{sec:vendor-rpi}
-        \item \href{https://www.sparkfun.com/products/13833}{Micro SD Card (at least 8GB in size)}
-          \label{sec:vendor-sd}
-        \item \href{https://www.sparkfun.com/products/12977}{USB to TTL Serial Cable (aka Console Cable)}
-          \label{sec:vendor-usbttlserial}
-        \item \href{https://www.sparkfun.com/products/13244}{USB to Micro USB Cable}
-          \label{sec:vendor-usbmusb}
-        \item \href{https://www.sparkfun.com/products/13763}{Humidity and Termperature Sensor}
-          \label{sec:vendor-sensor}
-        \item \href{https://www.sparkfun.com/products/11442}{7-Segment Display}
-          \label{sec:vendor-7seg}
-        \item \href{https://www.sparkfun.com/products/9065}{Servo Motor}
-          \label{sec:vendor-servo}
-        \item \href{https://www.sparkfun.com/products/12002}{Breadboard}
-          \label{sec:vendor-breadboard}
-        \item Jumper Wires (\href{https://www.sparkfun.com/products/12796}{F/F}, \href{https://www.sparkfun.com/products/12794}{M/F}, \href{https://www.sparkfun.com/products/12795}{M/M})
-          \label{sec:vendor-wires}
-        \item \href{https://www.sparkfun.com/products/552}{4xAA Battery Holder}
-          \label{sec:vendor-batholder}
-      \end{enumerate}
+    \imagefigs{resources/material-images/vendor-rpi}{Raspberry Pi 3 Model B (Most of this manual will apply to other versions and models as well, however it is tailored to this particular version and model of the RPi.) \href{https://www.sparkfun.com/products/13825}{https://www.sparkfun.com/products/13825} \label{sec:vendor-rpi}}
+    \imagefigs{resources/material-images/vendor-micro-sd}{Micro SD Card (at least 8GB in size) \href{https://www.sparkfun.com/products/13833}{https://www.sparkfun.com/products/13833}
+          \label{sec:vendor-sd}}
+    \imagefigs{resources/material-images/vendor-ttl-serial-cable}{USB to TTL Serial Cable (aka Console Cable) \href{https://www.sparkfun.com/products/12977}{https://www.sparkfun.com/products/12977}
+          \label{sec:vendor-usbttlserial}}
+    \imagefigs{resources/material-images/vendor-usb-micro-cable}{USB to Micro USB Cable \href{https://www.sparkfun.com/products/10767}{https://www.sparkfun.com/products/10767}
+          \label{sec:vendor-usbmusb}}
+    \imagefigs{resources/material-images/vendor-si7021}{Humidity and Termperature Sensor \href{https://www.sparkfun.com/products/13763}{https://www.sparkfun.com/products/13763}
+          \label{sec:vendor-sensor}}
+    \imagefigs{resources/material-images/vendor-seg7}{7-Segment Display \href{https://www.sparkfun.com/products/11442}{https://www.sparkfun.com/products/11442}
+          \label{sec:vendor-7seg}}
+    \imagefigs{resources/material-images/vendor-servo}{Servo Motor \href{https://www.sparkfun.com/products/9065}{https://www.sparkfun.com/products/9065}
+          \label{sec:vendor-servo}}
+    \imagefigs{resources/material-images/vendor-breadboard}{Breadboard \href{https://www.sparkfun.com/products/12002}{https://www.sparkfun.com/products/12002}
+          \label{sec:vendor-breadboard}}
+    \imagefigs{resources/material-images/vendor-f-f-jumper}{Jumper Wires: Female/Female \href{https://www.sparkfun.com/products/12796}{https://www.sparkfun.com/products/12796}}
+    \imagefigs{resources/material-images/vendor-f-m-jumper}{Jumper Wires: Male/Female \href{https://www.sparkfun.com/products/12794}{https://www.sparkfun.com/products/12794}}
+    \imagefigs{resources/material-images/vendor-m-m-jumper}{Jumper Wires: Male/Male \href{https://www.sparkfun.com/products/12795}{https://www.sparkfun.com/products/12795}}
+    \label{sec:vendor-wires}
+    \imagefigs{resources/material-images/vendor-battery-holder}{4xAA Battery Holder \href{https://www.sparkfun.com/products/552}{https://www.sparkfun.com/products/552}
+          \label{sec:vendor-batholder}}
 \end{appendices}
 %   \includegraphics[width=\textwidth]{jpg.jpg}
 %   \includepdf[pages={1-3}]{pdf.pdf}
