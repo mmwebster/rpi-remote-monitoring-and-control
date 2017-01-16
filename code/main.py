@@ -23,7 +23,7 @@ t_cold_thresh = 18 # (deg Celcius) lower threshold for temperature
 # An email will be sent every multiple of `email_period` that the
 # system stays in a danger state. The timing of this is currently arbitrary and
 # unreliable as all timing functionality is currently implemented in a blocking manner.
-email_period = 5
+email_period = 50
 
 # instantiate secrets pool
 secret = Secret()
