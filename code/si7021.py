@@ -15,6 +15,7 @@ class Si7021:
     def __init__(self, pi_ref, i2c_bus_ID, i2c_address):
         # init vars and the I2C comm
         self.degree_sign = u'\N{DEGREE SIGN}' # unicode for the degree symbol
+        self.degree_text = "deg" # unicode for the degree symbol
         self.pi = pi_ref
 
         # Open I2C com with si7021
@@ -70,7 +71,7 @@ class Si7021:
             # read temperature
             t_value = self.readTemperature()
             # print stats
-            print ("Si7021: Humidity: {:.2f}%, Temperature: {:.2f}" + self.degree_sign + "C").format(rh_value, t_value)
+            print ("Si7021: Humidity: {:.2f}%, Temperature: {:.2f}" + self.degree_text + "C").format(rh_value, t_value)
             # wait until next iteration
             time.sleep(1)
             # inc ticks

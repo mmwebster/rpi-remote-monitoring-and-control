@@ -20,6 +20,7 @@ class Servo:
         self.servo = GPIO.PWM(gpioPin, 50) # instantiate PWM output to GPIO `pin` @ 50Hz
 
         self.degree_sign= u'\N{DEGREE SIGN}' # unicode for the degree symbol
+        self.degree_text= "deg" # unicode for the degree symbol
         self.dc_min = 2.1 # the min duty cycle corresponding to 210deg rotation
         self.dc_max = 12.3 # the max duty cycle corresponding to 0deg rotation
         self.deg_min = 0
@@ -45,14 +46,14 @@ class Servo:
     def _initRotateTo(self, degrees):
         duty_cycle = self._degreesToDutyCycle(degrees)
         self.servo.start(duty_cycle) # start at init degree position
-        print("Servo: Rotated to " + str(degrees) + self.degree_sign)
+        print("Servo: Rotated to " + str(degrees) + self.degree_text)
 
     def rotateTo(self, degrees):
         # convert to the duty cycle
         duty_cycle = self._degreesToDutyCycle(degrees)
         # adjust duty cycle
         self.servo.ChangeDutyCycle(duty_cycle)
-        print("Servo: Rotated to " + str(degrees) + self.degree_sign)
+        print("Servo: Rotated to " + str(degrees) + self.degree_text)
 
     def test(self):
         positions = [105, 210, 105, 0]
