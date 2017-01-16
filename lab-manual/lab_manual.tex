@@ -1,5 +1,5 @@
 % compile in vim locally with <colon>,<L>,<tab>,<enter>
-%\documentclass[12pt]{article}
+% \documentclass[12pt]{article}
 \documentclass{article}
 % document packages
 \usepackage[utf8]{inputenc}
@@ -149,9 +149,7 @@
 \title{
   UC Santa Cruz, S-Lab \\
 %   \colorbox{BurntOrange}{\textbf{Remote Monitoring and Control w/ a Raspberry Pi}} \\
-  \textbf{Remote Monitoring and Control w/ a Raspberry Pi} \\
-  Prototyping a remote monitoring and control system \\
-  using a Raspberry Pi \\
+  \textbf{Prototyping a Remote Monitoring and Control System using a Raspberry Pi} \\
   % \colorbox{BurntOrange}{Q: module name?}
   % \textcolor{BurntOrange}{or this}
 }
@@ -349,7 +347,6 @@ It is recommended, if you do not have prior experience with Python, to complete 
     In the command line on your computer, SSH into the RPi by running \codei{ssh pi@\red{<IP-ADDRESS>}} where \codei{\red{<IP-ADDRESS>}} is replaced by the IP address you copied earlier. After running the command, you will be prompted for the password which, unless you changed it, will be its default of \textbf{raspberry}. Once authenticating, you have access command line access to the RPi (same as was achieved over the TTL Serial cable). This connection is, however, dependent on a the existence of a network, wheras the serial connection is not. A complete guide for this method can be found \href{https://www.raspberrypi.org/documentation/remote-access/ssh/}{here}.
     \paragraph{Using SFTP to transfer files}
     In a similar way, you can remotely access the RPi over SFTP, which makes file transfer between your computer and the RPi much easier. SFTP into the RPi by running \codei{sftp pi@\red{<IP-ADDRESS>}} in the command line of your computer. Then, you can use some of the standard UNIX commands to navigate through both the file system of the RPi and your computer (except that all commands need to be prefaced with \textbf{l} (letter "ell") indicating the local file system). The commands \codei{get} and \codei{put} can be used to transfer files from the RPi and to the RPi, respectively. A complete guide to using this method can be found \href{https://www.digitalocean.com/community/tutorials/how-to-use-sftp-to-securely-transfer-files-with-a-remote-server}{here}.
-    \todo{Add "Wired connection over direct-ethernet via private IP \& SSH"}
 
   \subsubsection{Wireless connection over WAN via Weaved \& SSH}
   \label{sec:connect-sshwan}
@@ -727,7 +724,6 @@ A state machine is a programming model that discretely defines the behavior of a
     \lstinputlisting[language=Python, caption=Example secrets.py]{example-secrets-tex.py}
 
 
-  \todo{Complete daemonization section}
   \subsubsection{Daemonizing the FSM (main.py)}
     \paragraph{Installing PM2}
     Run the following to update the RPi's packages and system, then install NPM and PM2:
@@ -738,16 +734,39 @@ A state machine is a programming model that discretely defines the behavior of a
         sudo npm install -g pm2 \\
     }
     \paragraph{Configuring PM2}
-    You should now be able to view all of PM2's active processes by ...
+    You should now be able to view all of PM2's active processes by running \codei{pm2 list}. Now, to configure PM2 to automatically start the FSM when it boots up, generate PM2's startup script command:
+    \codeb{Generate PM2's startup script command}{pm2 startup}
+    Then, copy the outputted setup command and run it. It should have a form similar to the following:
+    \outputb{Generate PM2's startup script}{sudo env PATH=\$PATH:/usr/bin /usr/local/lib/node\_modules/pm2/bin/pm2 startup systemd -u pi --hp /home/pi}
     \paragraph{Daemonizing main.py with PM2}
+    Run the following commands to startup the FSM (main.py) and save it to the processes restarted on reboot:
+    \codeb{Start FSM process; save it to reboot processes}{
+        pm2 start ~/Desktop/slab/code/main.py -n fsm --interpreter=python \\
+        pm2 save
+    }
+    \paragraph{General PM2 Commands}
+    The following are useful PM2 commands for monitoring the processes its currently running:
+    \begin{enumerate}
+        \item \codei{pm2 list}: Lists all current processes
+        \item \codei{pm2 stop <process-name>}: Stops the process <process-name>
+        \item \codei{pm2 start <process/file-name>}: Restarts the process <process/file-name> if it's the name of a currently stopped process in PM2, otherwise it attempts to start a process for the given path.
+        \item \codei{pm2 delete <process-name>}: Deletes the process (not the code, just the process) <process-name>
+    \end{enumerate}
 
 
 \subsection{Data Analysis}
 Some simple data recording and analysis can be performed by outputting sensor data to a CSV file with Python. From there it is trivial to import into Excel or Google Sheets to perform analysis as desired. To do this, we will save sensor data into a separate file for every day, in which will be the fields time (timestamp), humidity (\%), and temperature.(\degree C).
-  \subsubsection{Save sensor data to CSV files with Python}
-  We will modify the previous state machine code to include a few lines to append to a CSV file with the current sensor data every 8 seconds, which will result in about 10k entries in every day's CSV file. First, ...
-  \todo{Add stuff about saving data to csv files for every day with fields of (time,relHum,temp) that can import into Excel or Google Sheets to calculate some metrics on}
-    ...
+  \subsubsection{Saving \& Emailing CSV sensor w/ Python}
+  We will modify the previous state machine code to include a few lines to append to a CSV file with the current sensor data every 8 seconds, which will result in about 10k entries in every day's CSV file. First, following this tutorial to understand how the CSV module works in python:
+  \href{http://www.pythonforbeginners.com/systems-programming/using-the-csv-module-in-python/}{http://www.pythonforbeginners.com/systems-programming/using-the-csv-module-in-python/}.
+  Now, modify main.py with the following additions:
+  \begin{enumerate}
+      \item Import the CSV module at the top of the file
+      \item Write temperature and humidity data to the end of the file during every iteration of the state machine
+      \item In the main FSM runloop, email yourself with the sensor CSV data file attached using the provided Mailer class.
+  \end{enumerate}
+\subsection{Conclusion and Troubleshooting}
+  You should now be able to remotely monitor and control a system using a Raspberry Pi 3 and the additional materials detailed in this manual. If you have any questions, do your best to format them to only require yes or no answers, and then google them! StackOverflow.com and other online coding forums will be your best friends. More often than not, any problem you're experiencing has already been documented and solved online; go find it and don't rely on your lab instructor!
 % \subsection{Appendix}
 \begin{appendices}
 %  An Appendix contains information that is non-essential to understanding of the paper, but may present information that further clarifies a point without burdening the body of the presentation
