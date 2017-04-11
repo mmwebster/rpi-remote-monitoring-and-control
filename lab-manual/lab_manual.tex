@@ -246,7 +246,7 @@ It is recommended, if you do not have prior experience with Python, to complete 
   The RPi comes without any installed or configured OS. Follow the instructions below to use the micro SD card with NOOBS pre-installed to instal and configure Raspbian on the RPi. If you'd prefer formatting your own micro SD card, you can follow this tutorial \href{https://www.raspberrypi.org/help/noobs-setup/}{here}.
   \begin{enumerate}
     \item Place the micro SD card in the slot on the bottom of the RPi
-    \item Plug in all peripherals to your RPi over HDMI and the USB Ports (Monitor, Keyboard, and Mouse)
+    \item Plug in all peripherals to your RPi over the HDMI and the USB Ports (Monitor, Keyboard, and Mouse)
     \item Plug in the micro USB cable into the RPi's micro USB port
     \item Select and install Raspbian through the NOOBS GUI
   \end{enumerate}
@@ -290,15 +290,28 @@ It is recommended, if you do not have prior experience with Python, to complete 
       sudo rpi-update
     }
 
-    Now to disable bluetooth, run the following lines which append the distable-bt setting to the RPi's config file and stop the BT modem from trying to use UART, respectively.
+    Now to disable bluetooth, run the following command in order to edit the RPi's config file and stop the BT modem from trying to use UART:
 
-    \codeb{Disable bluetooth}
+    \codeb{Disable bluetooth: Edit boot config file}
     {
-      sudo echo "dtoverlay=pi3-disable-bt" >> /boot/config.txt \\
+      sudo nano /boot/config.txt
+    }
+
+    Then, add the following line to the end of the file:
+
+    \outputb{Disable bluetooth: Text to append to config file}
+    {
+      dtoverlay=pi3-disable-bt
+    }
+
+    Now, after exiting the nano editor, run the following command:
+
+    \codeb{Disable bluetooth: Disable hciuart}
+    {
       sudo systemctl disable hciuart
     }
 
-    Finally, reboot the RPi to allow the changes to take effect.
+    Finally, reboot the RPi (to allow the changes to take effect) by running \codei{sudo reboot}.
 
     \paragraph{Download and install the drivers for the TTL Serial cable}
     There are specific drivers required for this protocol that are available for Mac OSX, Windows, and Linux. Follow the appropriate guide below to download and install the drivers for your computer.
