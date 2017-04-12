@@ -755,7 +755,7 @@ A state machine is a programming model that discretely defines the behavior of a
     You should now be able to view all of PM2's active processes by running \codei{pm2 list}. Now, to configure PM2 to automatically start the FSM when it boots up, generate PM2's startup script command:
     \codeb{Generate PM2's startup script command}{pm2 startup}
     Then, copy the outputted setup command and run it. It should have a form similar to the following:
-    \outputb{Generate PM2's startup script}{sudo env PATH=\$PATH:/usr/bin /usr/local/lib/node\_modules/pm2/bin/pm2 startup systemd -u pi --hp /home/pi}
+    \outputb{Generate PM2's startup script (this is output, DO NOT EXECUTE IT)}{sudo env PATH=\$PATH:/usr/bin /usr/local/lib/node\_modules/pm2/bin/pm2 startup systemd -u pi --hp /home/pi}
     \paragraph{Daemonizing main.py with PM2}
     Run the following commands to startup the FSM (main.py) and save it to the processes restarted on reboot:
     \codeb{Start FSM process; save it to reboot processes}{
