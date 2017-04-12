@@ -197,7 +197,7 @@
       \item Essential:
       \begin{enumerate}
         \item \hyperref[sec:vendor-rpi]{Raspberry Pi 3 Model B (Most of this manual will apply to other versions and models as well, however it is tailored to this particular version and model of the RPi.)}
-        \item \hyperref[sec:vendor-sd]{Micro SD Card (at least 8GB in size)}
+        \item \hyperref[sec:vendor-sd]{Micro SD Card w/ NOOBS Pre-Loaded}
         \item \hyperref[sec:vendor-usbttlserial]{USB to TTL Serial Cable (aka Console Cable)}
         \item \hyperref[sec:vendor-usbmusb]{USB to Micro USB Cable (you most likely already use one for a phone or other device)}
         \item \hyperref[sec:vendor-sensor]{Humidity and Termperature Sensor}
@@ -218,7 +218,7 @@
         \item ...
       \end{enumerate}
     \end{enumerate}
-    
+
   \subsection{Learning outcomes}
   After completing this tutorial you should be able to do the following:
   \begin{enumerate}
@@ -229,8 +229,7 @@
       \item Program intelligent, autonomous logic with Finite State Machines (Note that this implementation uses Python's blocking sleep() function for timing events and is therefore not immediately responsive to sudden changes in inputs. Non-blocking style can be implemented using Python's multithreading library)
       \item Collect and remotely transmit (email) sensor data for later analysis
   \end{enumerate}
-    
-    
+
 \section{Pre-Lab}
 \subsection{Basics of Unix shell navigation and interaction}
 Before attending your first lab session, please complete items 1-6 of this tutorial \newline (\href{http://linuxcommand.org/lc3\_learning\_the\_shell.php}{http://linuxcommand.org/lc3\_learning\_the\_shell.php}) on the basics on navigation in and interaction with the Unix shell.
@@ -267,6 +266,7 @@ It is recommended, if you do not have prior experience with Python, to complete 
   \subsubsection{Wired connection over TTL Serial}
     \label{sec:connect-serial}
     It is often convenient to be able to interface with the RPi with only your personal computer, instead of with the monitor, keyboard, and mouse that were required when installing the OS. A TTL Serial connection between your RPi and computer will allow you to do everything you would normally be able to do through the Raspbian GUI, through the Raspbian CLI via a serial terminal on your computer.
+
     \paragraph{Enable the interfaces}
     To connect over TTL Serial, we must first enable the Serial interface on the RPi. Later on we will also need the SSH, SPI, and I2C interfaces so we'll enable those now as well. Navigate to \loc{Menu >> Preferences >> Raspberry Pi Configuration} as shown in the Figure 1 below.
 
@@ -351,6 +351,7 @@ It is recommended, if you do not have prior experience with Python, to complete 
     \newline
     \newline
     \underline{\textit{Note}}: This method only works for local networks and cannot be used to connect to your RPi if both your computer and the RPi are not connected to the same network. See \hyperref[sec:connect-sshwan]{the following section} if you wish to connect to your RPi from a different network than what the RPi is on.
+    \underline{\textit{Note}}: If on Windows, you will have to install an application such as PuTTY to SSH into the RPi.
 
     \paragraph{Connect the RPi to a local network}
     To connect over SSH or SFTP, the RPi must first be connected to a local network (which was done earlier in this manual)
@@ -475,7 +476,7 @@ It is recommended, if you do not have prior experience with Python, to complete 
       sudo pkill pigpiod  \\
       whereis pigpiod
     }
-    This will output something of the form:
+    This will output something of the form (do not run this, it is just example output from the previous commands):
     \outputb{\texttt{whereis pigpiod} command output}
     {
       pi@raspberrypi:\textasciitilde \$ whereis pigpiod \\
@@ -785,7 +786,7 @@ Some simple data recording and analysis can be performed by outputting sensor da
 %  An Appendix contains information that is non-essential to understanding of the paper, but may present information that further clarifies a point without burdening the body of the presentation
   \subsection{Suggested Material Vendors}
     \imagefigs{resources/material-images/vendor-rpi}{Raspberry Pi 3 Model B (Most of this manual will apply to other versions and models as well, however it is tailored to this particular version and model of the RPi.) \href{https://www.sparkfun.com/products/13825}{https://www.sparkfun.com/products/13825} \label{sec:vendor-rpi}}
-    \imagefigs{resources/material-images/vendor-micro-sd}{Micro SD Card (at least 8GB in size) \href{https://www.sparkfun.com/products/13833}{https://www.sparkfun.com/products/13833}
+    \imagefigs{resources/material-images/vendor-micro-sd}{Micro SD Card (at least 8GB in size) \href{https://www.adafruit.com/product/1583}
           \label{sec:vendor-sd}}
     \imagefigs{resources/material-images/vendor-ttl-serial-cable}{USB to TTL Serial Cable (aka Console Cable) \href{https://www.sparkfun.com/products/12977}{https://www.sparkfun.com/products/12977}
           \label{sec:vendor-usbttlserial}}
