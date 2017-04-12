@@ -312,6 +312,8 @@ It is recommended, if you do not have prior experience with Python, to complete 
       sudo systemctl disable hciuart
     }
 
+    
+
     Finally, reboot the RPi (to allow the changes to take effect) by running \codei{sudo reboot}.
 
     \paragraph{Download and install the drivers for the TTL Serial cable}
@@ -544,7 +546,7 @@ It is recommended, if you do not have prior experience with Python, to complete 
     Some notes for wiring the seg7 display:
     \begin{enumerate}
       \item The seg7 is actually rated to a range of 2.4V to 6V and therefore works with a supply of either 3.3V or 5V from the RPi. We will use 5V, as it results in a brighter display.
-      \item The SDA and SCL I2C pins on the seg7 will be connected to the same I2C bus used for the si7021. The design of the 7-bit ID, I2C protocol allows for $2^7$ (128) devices with unique IDs. The seg7 display defaults to an I2C address of 0x71, which does not conflict with the 0x40 address of the si7021.
+      \item The SDA (data line) and SCL (clock line) I2C pins on the seg7 will be connected to the same I2C bus used for the si7021. The design of the 7-bit ID, I2C protocol allows for $2^7$ (128) devices with unique IDs. The seg7 display defaults to an I2C address of 0x71, which does not conflict with the 0x40 address of the si7021.
       \item Make sure that you do not place the seg7 in an upside down orientation on the breadboard. This would result in the the 5V/GND pins being switched with the SCL/SDA pins.
     \end{enumerate}
     \newline
@@ -651,6 +653,7 @@ It is recommended, if you do not have prior experience with Python, to complete 
     Now, copy and paste the following code into this file:
      \lstinputlisting[language=Python, caption=Script for testing the servo motor]{servo-test-tex.py}
     \note{When copying the above code, make sure that you do not copy the page number in between the two pages.}
+    \note{If using the RPi with peripherals, you can paste with SHIFT-CONTROL-C}
     \newline
     \noindent
     Now save the file (\texttt{\textbf{control-O <enter> control-X}}) and run the script by executing the following in the command line:
