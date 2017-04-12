@@ -33,10 +33,10 @@ while True:
     # write "HELO" if is display enabled
     if (enabled):
         try: # I2C write can fail, this will catch the failure
-            pi.i2c_write_device(seg7, ['H'])
-            pi.i2c_write_device(seg7, ['E'])
-            pi.i2c_write_device(seg7, ['L'])
-            pi.i2c_write_device(seg7, ['O'])
+            pi.i2c_write_device(seg7, ["H"])
+            pi.i2c_write_device(seg7, ["E"])
+            pi.i2c_write_device(seg7, ["L"])
+            pi.i2c_write_device(seg7, ["O"])
             print("Hello")
         except pigpio.error as e:
             print("ERROR: failed to write to seg7 over I2C")

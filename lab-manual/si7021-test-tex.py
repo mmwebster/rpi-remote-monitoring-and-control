@@ -13,7 +13,7 @@ import pigpio
 #######################################################################
 i2c_bus_ID = 1
 i2c_address = 0x40
-degree_sign= u'\N{DEGREE SIGN}' # unicode for the degree symbol
+degree_sign= "deg" # unicode for the degree symbol
 
 # instantiate the local RPi's GPIO
 pi = pigpio.pi()

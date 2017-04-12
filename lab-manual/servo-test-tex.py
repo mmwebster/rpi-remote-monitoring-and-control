@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 #######################################################################
 # Import libraries
@@ -12,10 +11,10 @@ import RPi.GPIO as GPIO
 #######################################################################
 GPIO.setmode(GPIO.BCM) # pin numbering scheme that uses GPIO numbers
 GPIO.setwarnings(False)
-GPIO.setup(25, GPIO.OUT) # set GPIO 25 as output
-servo = GPIO.PWM(25, 50) # instantiate PWM output to GPIO 25 @ 50Hz
+GPIO.setup(4, GPIO.OUT) # set GPIO 25 as output
+servo = GPIO.PWM(4, 50) # instantiate PWM output to GPIO 25 @ 50Hz
 
-degree_sign= u'\N{DEGREE SIGN}' # unicode for the degree symbol
+degree_sign= "deg" # unicode for the degree symbol
 dc_min = 2.1 # the min duty cycle corresponding to 210deg rotation
 dc_max = 12.3 # the max duty cycle corresponding to 0deg rotation
 
