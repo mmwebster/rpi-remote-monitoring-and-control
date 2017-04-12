@@ -739,6 +739,7 @@ A state machine is a programming model that discretely defines the behavior of a
     \paragraph{Implementing a .gitignore'd secrets.py}
     There is one last step required to implement the state machine such that you receive email alerts. You must create a \codei{secrets.py} file that contains your passwords and other credentials for your SMTP email. It should be in the code's top-level directory with the following form:
     \lstinputlisting[language=Python, caption=Example secrets.py]{example-secrets-tex.py}
+    \note{Replace the x's with the email account's password, leave "email_password" as-is.}
 
 
   \subsubsection{Daemonizing the FSM (main.py)}

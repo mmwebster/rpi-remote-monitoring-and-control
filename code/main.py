@@ -32,7 +32,7 @@ secret = Secret()
 pi = pigpio.pi()
 
 # instantiate email class
-mailer = Mailer("wilomebster@gmail.com", secret.fetch("email_password"), "milowebster@gmail.com")
+mailer = Mailer(secret.fetch("email_from"), secret.fetch("email_password"), secret.fetch("email_to"))
 
 # instantiate servo class
 servo = Servo(4, 210/2) # start servo via GPIO 25, at 50% rotation
@@ -283,6 +283,3 @@ def main():
     pi.stop()
 
 main()
-
-####
-#) NOTE: left off at filling out the "->" actions in the state machine, where first needed to finish consildating and packaging the routines for which tests were originally written.
