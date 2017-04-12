@@ -168,7 +168,7 @@
 
 \section{Introduction}
   \subsection{Summary}
-  This manual will detail the process of designing and implementing a remote monitoring and control system using a Raspberry Pi (RPi). This includes initial config and installation of the OS, communicating with the RPi over a TTL Serial connection, configuring SSH and a public IP to remotely connect, communicating with several sensors over SPI and I2C protocols, sending emails and HTTP requests, and using a Finite State Machine (FSM) to define the autonomous behavior of the RPi.
+  This manual details the process of designing and implementing a remote monitoring and control system using a Raspberry Pi (RPi). This includes initial config and installation of the OS, communicating with the RPi over a TTL Serial connection, configuring SSH and a public IP to remotely connect, communicating with several sensors over SPI and I2C protocols, sending emails and HTTP requests, and using a Finite State Machine (FSM) to define the autonomous behavior of the RPi.
   The RPi is a very useful instrument for Internet of Things (IoT) type applications, given that it is basically a fully featured computer with a small form factor. As a result, many designs are much easier and quicker to implement on an RPi than on a microcontroller. RPis are ideal for embedded applications in which there is not much constraint on the size and power consumption of the system. Upon completion of this module, you should be able to implement not only the particular system covered in this manual, but also another system of your own design.
   \subsection{Prerequisites}
   It is recommended that you have introductory-level programming experience prior to taking this module.
@@ -177,17 +177,17 @@
   %
   \subsection{Definitions and terminology}
     \begin{enumerate}
-      \createterm{https://en.wikipedia.org/wiki/Raspberry\_Pi}{RPi (Raspberry Pi)}{An awesome prototyping board that features a plethora advances hardware and utilities made incredibly easy to interface with}
+      \createterm{https://en.wikipedia.org/wiki/Raspberry\_Pi}{RPi (Raspberry Pi)}{A small but powerful linux machine with great I/O capabilities.}
       \createterm{https://www.raspberrypi.org/blog/introducing-noobs/}{NOOBS (New Out Of Box Software)}{A software package for the RPi that makes installing the OS on an unconfigured RPi "much, much easier."}
-      \createterm{https://en.wikipedia.org/wiki/Secure\_Shell}{SSH (Secure SHell)}{A protocol commonly used for remotely authenticating into a computer}
-      \createterm{https://en.wikipedia.org/wiki/Transistor\%E2\%80\%93transistor\_logic}{TTL (Transistor-Transistor Logic)}{A serial protocol used for communication between two systems using only a RX (receive) and TX (transmit) signal}
-      \createterm{https://en.wikipedia.org/wiki/Serial\_Peripheral\_Interface\_Bus}{SPI (Serial Peripheral Interface)}{A communications protocol that uses a master-slave architecture. More details can be found.}
-      \createterm{https://en.wikipedia.org/wiki/I\%C2\%B2C}{I2C (Inter-Integrated Circuit)}{A communications protocol that allows for multiple master and slave nodes in the network. More details can be found.}
-      \createterm{https://en.wikipedia.org/wiki/Finite-state\_machine}{FSM (Finite State Machine)}{A programming design that uses inputs to determine transitions between states, and particular outputs during the process. They are very useful for defining the lifetime of a system and how it will react to all possible inputs. More details can be found.}
+      \createterm{https://en.wikipedia.org/wiki/Secure\_Shell}{SSH (Secure SHell)}{A protocol commonly used for securely connecting to a remote computer}
+      \createterm{https://en.wikipedia.org/wiki/Transistor\%E2\%80\%93transistor\_logic}{TTL (Transistor-Transistor Logic)}{A serial protocol used for communication between two systems using only RX (receive) and TX (transmit) signals}
+      \createterm{https://en.wikipedia.org/wiki/Serial\_Peripheral\_Interface\_Bus}{SPI (Serial Peripheral Interface)}{A communications protocol that uses a master-slave architecture}
+      \createterm{https://en.wikipedia.org/wiki/I\%C2\%B2C}{I2C (Inter-Integrated Circuit)}{A communications protocol with greater latency than SPI, but greater node addressibility}
+      \createterm{https://en.wikipedia.org/wiki/Finite-state\_machine}{FSM (Finite State Machine)}{A programming design that uses inputs to determine transitions between states, and particular outputs during the process. They are very useful for defining the lifetime of a system and how it will react to all possible inputs}
       \createterm{https://en.wikipedia.org/wiki/Hypertext\_Transfer\_Protocol\#Request\_methods}{HTTP (Hypertext Transfer Protocol) Request}{The protocol used across the web for the majority of all communications. This manual will detail the process of using a POST request type to send data from the RPi to a remote destination.}
-      \createterm{https://en.wikipedia.org/wiki/Command-line\_interface}{Shell CLI (Command-line Interface)}{An instance of a program that allows a user to directly interface with services provided by the OS via a suite of commands.}
-      \createterm{https://en.wikipedia.org/wiki/Local\_area\_network}{LAN (Local Area Network)}{A computer network that, among other things, allows computers in the same vicinity to communicate with one another. Wireless printers in your home use the LAN set up by your router to communicate with your personal computer.}
-      \createterm{https://en.wikipedia.org/wiki/Wide\_area\_network}{WAN (Wide Area Network)}{A computer network that, among other things, allows computers to communicate with one another, regarldess of geographic proximity. The internet is a form of WAN.}
+      \createterm{https://en.wikipedia.org/wiki/Command-line\_interface}{Shell CLI (Command-line Interface)}{A mechanism for interfacing with the OS, through which commands can be executed}
+      \createterm{https://en.wikipedia.org/wiki/Local\_area\_network}{LAN (Local Area Network)}{A computer network that, among other things, allows computers in the same vicinity to communicate with one another. Wireless printers in your home use a LAN set up by your router to communicate with your personal computer.}
+      \createterm{https://en.wikipedia.org/wiki/Wide\_area\_network}{WAN (Wide Area Network)}{A computer network that, among other things, allows computers to communicate with one another, regardless of physical proximity. The internet is considered a form of WAN.}
     \end{enumerate}
   \subsection{Materials}
   \label{sec:materials}
@@ -226,23 +226,23 @@
       \item Connect to and run operations on your Raspberry Pi over LAN and WAN via SSH and SFTP
       \item Communicate over SPI and I2C with sensors and store their inputs
       \item Drive a servo to actuate mechanical systems
-      \item Program intelligent, autonomous logic with Finite State Machines (Note that this implementation uses Python's blocking sleep() function for timing events and is therefore not immediately responsive to sudden changes in inputs. Non-blocking style can be implemented using Python's multithreading library)
+      \item Program intelligent, autonomous logic with Finite State Machines (Note that this implementation uses Python's blocking sleep() function for timing events and is therefore not immediately responsive to sudden changes in inputs. Non-blocking style can be implemented using Python's multithreading library. An example can be found here: \url{https://github.com/mmwebster/rpi-attendance-tracker})
       \item Collect and remotely transmit (email) sensor data for later analysis
   \end{enumerate}
 
 \section{Pre-Lab}
 \subsection{Basics of Unix shell navigation and interaction}
-Before attending your first lab session, please complete items 1-6 of this tutorial \newline (\href{http://linuxcommand.org/lc3\_learning\_the\_shell.php}{http://linuxcommand.org/lc3\_learning\_the\_shell.php}) on the basics on navigation in and interaction with the Unix shell.
+Before attending your first lab session, please complete items 1-6 of this tutorial \newline (\url{http://linuxcommand.org/lc3\_learning\_the\_shell.php}) on the basics of navigation in and interaction with the Unix shell.
 
 \subsection{Basics of programming in Python}
-It is recommended, if you do not have prior experience with Python, to complete the "Learn the Basics" portion of this tutorial (
-\href{https://www.learnpython.org/en/Welcome}{https://www.learnpython.org/en/Welcome}) to gather a working knowledge of Python.
+It is recommended, if you do not have prior experience with Python, that you complete the "Learn the Basics" portion of this tutorial (
+\url{https://www.learnpython.org/en/Welcome}) to gain a working knowledge of Python.
 
 \section{Day 1: Configuration and Input}
 \subsection{Setting up the Raspberry Pi (RPi)}
 \underline{\textit{Note}}: Any \outputi{CLI output text} colored in \outputi{\red{red}} indicates that it will likely be different from your.
   \subsubsection{Using NOOBS to install the OS (Raspbian)}
-  The RPi comes without any installed or configured OS. Follow the instructions below to use the micro SD card with NOOBS pre-installed to instal and configure Raspbian on the RPi. If you'd prefer formatting your own micro SD card, you can follow this tutorial \href{https://www.raspberrypi.org/help/noobs-setup/}{here}.
+  The RPi comes without any installed or configured OS. Follow the instructions below to use the micro SD card with NOOBS pre-installed to install and configure Raspbian on the RPi. If you'd prefer formatting your own micro SD card, you can follow this tutorial (\url{https://www.raspberrypi.org/help/noobs-setup/}).
   \begin{enumerate}
     \item Place the micro SD card in the slot on the bottom of the RPi
     \item Plug in all peripherals to your RPi over the HDMI and the USB Ports (Monitor, Keyboard, and Mouse)
@@ -253,7 +253,7 @@ It is recommended, if you do not have prior experience with Python, to complete 
 
   \subsubsection{Some RPi basics}
     \paragraph{Connecting to a wireless network}
-    Through the Raspbian GUI, there is a wifi icon in the upper right of the screen with and clicking on this will take you through a straight-forward prompts to connect to a wireless network. If you are currently using your RPi in "Headless" mode (without a monitor..and GUI), \href{https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md}{this guide} details the process of connecting to a wireless network via the command line (command line access is described in the \hyperref[sec:connect-serial]{section 2.3} and \hyperref[sec:connect-ssh]{section 2.4})
+    Through the Raspbian GUI, there is a wifi icon in the upper right corner of the screen; clicking on this will take you through straight-forward prompts to connect to a wireless network. If you are currently using your RPi in "Headless" mode (without a monitor..and GUI), this guide (\url{https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md}) details the process of connecting to a wireless network via the command line (command line access is described in \hyperref[sec:connect-serial]{section 2.3} and \hyperref[sec:connect-ssh]{section 2.4})
     \paragraph{Shutting down}
     \label{sec:shutting-down}
     It is important that the RPi is always properly shutdown prior to being disconnected from a power source. If it is not, there is a chance that the OS and other persisted data on the micro SD card will be corrupted. You can properly shutdown the RPi via command line or the Raspbian GUI (Graphical User Interface):
@@ -265,20 +265,20 @@ It is recommended, if you do not have prior experience with Python, to complete 
 
   \subsubsection{Wired connection over TTL Serial}
     \label{sec:connect-serial}
-    It is often convenient to be able to interface with the RPi with only your personal computer, instead of with the monitor, keyboard, and mouse that were required when installing the OS. A TTL Serial connection between your RPi and computer will allow you to do everything you would normally be able to do through the Raspbian GUI, through the Raspbian CLI via a serial terminal on your computer.
+    It is often convenient to be able to interface with the RPi from your personal computer, instead of with the monitor, keyboard, and mouse that were required when installing the OS. A TTL Serial connection between your RPi and computer will allow you to do everything you would normally be able to do through the Raspbian GUI, through the Raspbian CLI via a serial terminal on your computer.
 
     \paragraph{Enable the interfaces}
     To connect over TTL Serial, we must first enable the Serial interface on the RPi. Later on we will also need the SSH, SPI, and I2C interfaces so we'll enable those now as well. Navigate to \loc{Menu >> Preferences >> Raspberry Pi Configuration} as shown in the Figure 1 below.
 
     \imagefig{screen1.png}{RPi Configuration at \loc{Menu >> Preferences >> Raspberry Pi Configuration}}
 
-    Next, navigate to the \loc{Interface} tab and enable all of the necessary interfaces (SSH, SPI, I2C, and Serial) as shown in Figure 2 below.
+    Next, navigate to the \loc{Interfaces} tab and enable all of the necessary interfaces (SSH, SPI, I2C, and Serial) as shown in Figure 2 below.
     \imagefig{screen2.png}{Necessary interface configuration for the RPi}
 
     Now press \textit{OK}, and reboot the RPi by going to \loc{Menu >> Shutdown} and clicking \textit{Reboot}.
 
     \paragraph{Disable bluetooth to free up GPIO 14 \& 15 (TX, RX)}
-    On the Pi 3 Model B, it so happens that the built-in Bluetooth chip consumes GPIO (General-Purpose Input/Output) 14 \& 15 (pins 8 \& 10) that correspond to TX and RX, respectively, that are required for the serial connection. We must now disable this in order to free up these pins. First, open the \textit{Terminal} application to get a CLI Shell into Raspbian. The application can be navigated to by \loc{Menu >> Accessories >> Terminal}. You should now see a window that looks like the following in Figure 3.
+    On the Pi 3 Model B, it so happens that the built-in Bluetooth chip consumes GPIO (General-Purpose Input/Output) 14 \& 15 (pins 8 \& 10) that correspond to TX and RX, respectively; these are required for a serial connection with the RPi. We must now disable bluetooth in order to free up these pins. First, open the \textit{Terminal} application to get a CLI Shell into Raspbian. The application can be navigated to by \loc{Menu >> Accessories >> Terminal}. You should now see a window that looks like the following in Figure 3.
     \imagefig{screen3.png}{Raspbian Terminal App (Shell CLI)}
 
     In the shell, you can enter unix style commands indicated in this manual by \codei{this styling}. Run the following commands to ensure that your RPi is up to date.
@@ -291,7 +291,7 @@ It is recommended, if you do not have prior experience with Python, to complete 
       sudo rpi-update
     }
 
-    Now to disable bluetooth, run the following command in order to edit the RPi's config file and stop the BT modem from trying to use UART:
+    Now, to disable bluetooth, run the following command in order to edit the RPi's config file and stop the BT modem from trying to use UART:
 
     \codeb{Disable bluetooth: Edit boot config file}
     {
@@ -311,8 +311,6 @@ It is recommended, if you do not have prior experience with Python, to complete 
     {
       sudo systemctl disable hciuart
     }
-
-    
 
     Finally, reboot the RPi (to allow the changes to take effect) by running \codei{sudo reboot}.
 
@@ -337,7 +335,7 @@ It is recommended, if you do not have prior experience with Python, to complete 
 
     \checkpoint{Before proceeding, please confirm with your lab instructor that you have correctly}{wired your TTL Serial Cable.}
 
-    \textbf{DO NOT SUPPLY POWER OVER BOTH THE MICRO USB AND THE SERIAL CABLE} and double check that the leads of the serial cable are connected properly; the RPi is not especially tolerant when it comes to power and can be fried somewhat easily. Once you're certain the leads of the cable are properly connected, plug the USB into your computer and you should see the RPi's power LED indicator turn on as it did when supplied power over micro USB.
+    \textbf{DO NOT SUPPLY POWER OVER BOTH THE MICRO USB AND THE SERIAL CABLE} and double check that the leads of the serial cable are connected properly; the RPi is not especially tolerant when it comes to power and can be fried somewhat easily. Once you're certain that the leads of the cable are properly connected, plug the USB into your computer and you should see the RPi's power LED indicator turn on as it did when supplied power over micro USB.
 
     \paragraph{Testing the connection}
     Now, all that's neccessary to connect over the serial connection is to open a serial terminal and connect to the right port using \textbf{115200 baud}. \textit{Screen} is a command line serial interface and comes with recent releases of \textit{Mac OSX}. It does not come with all distributions of \textit{Linux}, but can easily be installed using \codei{sudo apt-get install screen}. \textit{Windows} requires an application called \textit{PuTTY} and the process takes slightly longer. \href{https://learn.adafruit.com/adafruits-raspberry-pi-lesson-5-using-a-console-cable/test-and-configure}{This is a guide detailing the complete steps for each operating system.}
@@ -349,18 +347,18 @@ It is recommended, if you do not have prior experience with Python, to complete 
     \end{itemize}
     \subsubsection{Wireless connection over LAN via local IP \& SSH}
     \label{sec:connect-ssh}
-    Sometimes it is more convenient to connect to the RPi over SSH because of the extra features it provides. Included in these features is a protocol called SFTP (SSH File Transfer Protocol) that makes it quick and easy to transfer files between your computer and the RPi. To connec to your RPi in this manner requires the use of a LAN (Local Area Network) on which both your personal computer and the RPi must be one.
+    Sometimes it is more convenient to connect to the RPi over SSH because of the additional features that it provides. Included in these features is a protocol called SFTP (SSH File Transfer Protocol) that makes it quick and easy to transfer files between your computer and the RPi. Connecting to your RPi in this manner requires the use of a LAN (Local Area Network) to which both your personal computer and the RPi must be connected.
     \newline
     \newline
-    \underline{\textit{Note}}: This method only works for local networks and cannot be used to connect to your RPi if both your computer and the RPi are not connected to the same network. See \hyperref[sec:connect-sshwan]{the following section} if you wish to connect to your RPi from a different network than what the RPi is on.
+    \underline{\textit{Note}}: This method only works for local networks and cannot be used to connect to your RPi if both your computer and the RPi are not connected to the same LAN. See \hyperref[sec:connect-sshwan]{the following section} if you wish to connect to your RPi from a different network than what the RPi is on.
     \underline{\textit{Note}}: If on Windows, you will have to install an application such as PuTTY to SSH into the RPi.
 
     \paragraph{Connect the RPi to a local network}
-    To connect over SSH or SFTP, the RPi must first be connected to a local network (which was done earlier in this manual)
+    To connect over SSH or SFTP, the RPi must first be connected to a local network (which was done earlier in this manual).
     \paragraph{Determine the RPi's IP address}
-    After connecting to your local network, the RPi will be allocated an IP address. To find this, connect to the RPi over serial (as described in \hyperref[sec:connect-serial]{section 2.2}). Then, in the command line run \codei{hostname -I}. This should output something of the form \outputi{\red{\textbf{10.0.1.26} 2601:1c0:5101:1ea8:e2af:7dc1:9da6:2025}}, where the bolded portion is the RPi's IP address. Copy this address to your clipboard.
+    After connecting to your local network, the RPi will be allocated an IP address. To find this, connect to the RPi over serial (as described in \hyperref[sec:connect-serial]{section 2.2}). Then, in the command line, run \codei{hostname -I}. This should output something of the form \outputi{\red{\textbf{10.0.1.26} 2601:1c0:5101:1ea8:e2af:7dc1:9da6:2025}}, where the bolded portion is the RPi's local IP address that was assigned by your router. Copy this address to your clipboard.
     \paragraph{Making the SSH connection}
-    In the command line on your computer, SSH into the RPi by running \codei{ssh pi@\red{<IP-ADDRESS>}} where \codei{\red{<IP-ADDRESS>}} is replaced by the IP address you copied earlier. After running the command, you will be prompted for the password which, unless you changed it, will be its default of \textbf{raspberry}. Once authenticating, you have access command line access to the RPi (same as was achieved over the TTL Serial cable). This connection is, however, dependent on a the existence of a network, wheras the serial connection is not. A complete guide for this method can be found \href{https://www.raspberrypi.org/documentation/remote-access/ssh/}{here}.
+    In the command line on your computer, SSH into the RPi by running \codei{ssh pi@\red{<IP-ADDRESS>}} where \codei{\red{<IP-ADDRESS>}} is replaced by the IP address you copied earlier. After running the command, you will be prompted for the password which, unless you changed it, will be its default of \textbf{raspberry}. Once authenticated, you have command line access to the RPi (the same as was achieved over the TTL Serial cable). This connection is, however, dependent on a the existence of a network, wheras the serial connection is not. A complete guide for this method can be found here: \url{https://www.raspberrypi.org/documentation/remote-access/ssh/}.
     \paragraph{Using SFTP to transfer files}
     In a similar way, you can remotely access the RPi over SFTP, which makes file transfer between your computer and the RPi much easier. SFTP into the RPi by running \codei{sftp pi@\red{<IP-ADDRESS>}} in the command line of your computer. Then, you can use some of the standard UNIX commands to navigate through both the file system of the RPi and your computer (except that all commands need to be prefaced with \textbf{l} (letter "ell") indicating the local file system). The commands \codei{get} and \codei{put} can be used to transfer files from the RPi and to the RPi, respectively. A complete guide to using this method can be found \href{https://www.digitalocean.com/community/tutorials/how-to-use-sftp-to-securely-transfer-files-with-a-remote-server}{here}.
 
@@ -739,7 +737,7 @@ A state machine is a programming model that discretely defines the behavior of a
     \paragraph{Implementing a .gitignore'd secrets.py}
     There is one last step required to implement the state machine such that you receive email alerts. You must create a \codei{secrets.py} file that contains your passwords and other credentials for your SMTP email. It should be in the code's top-level directory with the following form:
     \lstinputlisting[language=Python, caption=Example secrets.py]{example-secrets-tex.py}
-    \note{Replace the x's with the email account's password, leave "email_password" as-is.}
+    \note{Replace the x's with the email account's password, leave "email\_password" as-is.}
 
 
   \subsubsection{Daemonizing the FSM (main.py)}
