@@ -759,9 +759,10 @@ A state machine is a programming model that discretely defines the behavior of a
     \paragraph{Daemonizing main.py with PM2}
     Run the following commands to startup the FSM (main.py) and save it to the processes restarted on reboot:
     \codeb{Start FSM process; save it to reboot processes}{
-        pm2 start ~/Desktop/slab/code/main.py -n fsm --interpreter=python \\
+        pm2 start \red{~/Desktop/slab/code/main.py} -n fsm ---interpreter=python \\
         pm2 save
     }
+    \note{The file path for main.py (in red, above) might be different for you depending on where you saved your code. You can run \codei{pwd} to see what your current system path is.}
     \paragraph{General PM2 Commands}
     The following are useful PM2 commands for monitoring the processes its currently running:
     \begin{enumerate}
@@ -783,6 +784,7 @@ Some simple data recording and analysis can be performed by outputting sensor da
       \item Write temperature and humidity data to the end of the file during every iteration of the state machine
       \item In the main FSM runloop, email yourself with the sensor CSV data file attached using the provided Mailer class.
   \end{enumerate}
+  \note{You will have to write the CSV code yourself—it is not provided.}
 \subsection{Conclusion and Troubleshooting}
   You should now be able to remotely monitor and control a system using a Raspberry Pi 3 and the additional materials detailed in this manual. If you have any questions, do your best to format them to only require yes or no answers, and then google them! StackOverflow.com and other online coding forums will be your best friends. More often than not, any problem you're experiencing has already been documented and solved online; go find it and don't rely on your lab instructor!
 % \subsection{Appendix}
